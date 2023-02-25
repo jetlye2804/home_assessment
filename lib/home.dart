@@ -3,18 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:http/http.dart' as http;
 
+import 'models/genre_model.dart';
+
 class Home extends StatefulWidget {
   static var routeName = '/home';
   final NowPlayingModel? nowPlayingModel;
+  final GenreModel? genreModel;
 
-  const Home({super.key, this.nowPlayingModel});
+  const Home({super.key, this.nowPlayingModel, this.genreModel});
 
   @override
   State<Home> createState() => _HomeState();
-}
-
-Future<http.Response> fetchAlbum() {
-  return http.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
 }
 
 class _HomeState extends State<Home> {
@@ -38,8 +37,6 @@ class _HomeState extends State<Home> {
       }
     }
 
-    print(count);
-
     setState(() {
       currentPage = count;
     });
@@ -48,6 +45,13 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var nowPlaying = widget.nowPlayingModel;
+    // Filter all non-english movie, especially russian movies
+    // Intended to do so
+    var englishMovieList = nowPlaying!.results!.where((movie) {
+      return movie.originalLanguage == 'en';
+    }).toList();
+    var genre = widget.genreModel;
+    var genreList = genre!.genres!;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
@@ -130,7 +134,7 @@ class _HomeState extends State<Home> {
                   ),
                   Expanded(
                       child: GridView.builder(
-                    itemCount: nowPlaying!.results!.length,
+                    itemCount: englishMovieList.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             childAspectRatio: 1 / 2.5,
@@ -138,7 +142,7 @@ class _HomeState extends State<Home> {
                             crossAxisSpacing: 12.0,
                             mainAxisSpacing: 12.0),
                     itemBuilder: (BuildContext context, int index) {
-                      var movieItem = nowPlaying.results![index];
+                      var movieItem = englishMovieList[index];
 
                       var adultTag = Container(
                           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -154,45 +158,81 @@ class _HomeState extends State<Home> {
                                 color: const Color.fromARGB(255, 168, 0, 0)),
                             child: const Text("Adult"));
                       }
+                      var languageTag = Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.deepPurple),
+                          child:
+                              Text(movieItem.originalLanguage!.toUpperCase()));
 
-                      return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: const Color.fromARGB(255, 52, 52, 52)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            movieItem.posterPath != null
-                                ? ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20)),
-                                    child: Image.network(
-                                      "https://www.themoviedb.org/t/p/w440_and_h660_face/${movieItem.posterPath}",
-                                      fit: BoxFit.cover,
-                                      height: 300,
-                                      width: 200,
-                                    ),
-                                  )
-                                : Container(),
-                            Container(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 50,
-                                      child: Text(movieItem.originalTitle!,
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400)),
-                                    ),
-                                    Text(movieItem.releaseDate!),
-                                    adultTag
-                                  ],
-                                ))
-                          ],
-                        ),
+                      List<Widget> matchedGenreList = [];
+                      var genre = genreList.firstWhere(
+                          (genre) => genre.id == movieItem.genreIds![0]);
+                      var genreTag = Container(
+                          margin: const EdgeInsets.only(right: 8, bottom: 8),
+                          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.blueAccent),
+                          child: Text(genre.name!.toUpperCase()));
+
+                      return Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: const Color.fromARGB(255, 52, 52, 52)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                movieItem.posterPath != null
+                                    ? ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20)),
+                                        child: Image.network(
+                                          "https://www.themoviedb.org/t/p/w440_and_h660_face/${movieItem.posterPath}",
+                                          fit: BoxFit.cover,
+                                          height: 300,
+                                          width: 200,
+                                        ),
+                                      )
+                                    : Container(),
+                                Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(movieItem.originalTitle!,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400)),
+                                        Container(
+                                          padding: const EdgeInsets.only(
+                                              top: 8.0, bottom: 8.0),
+                                          child: Text(movieItem.releaseDate!),
+                                        ),
+                                        Container(
+                                            padding:
+                                                EdgeInsets.only(bottom: 8.0),
+                                            child: Row(
+                                              children: [adultTag, languageTag],
+                                            )),
+                                        genreTag
+                                      ],
+                                    )),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            child: Text("Lorem ipsum"),
+                            right: 8.0,
+                            bottom: 8.0,
+                          ),
+                        ],
                       );
                     },
                   )),

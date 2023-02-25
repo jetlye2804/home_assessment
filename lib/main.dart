@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:home_assessment/api.dart';
 import 'package:home_assessment/home.dart';
+import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/page_transition.dart';
 import 'package:home_assessment/singleton_util.dart';
@@ -23,19 +24,27 @@ class MyApp extends StatelessWidget {
 
   late BuildContext context;
   late Future<NowPlayingModel> nowPlayingModel;
+  late Future<GenreModel> genreModel;
   Map<String, Widget>? routes;
 
   Future<void> initialization() async {
     routes = {
-      Home.routeName: Home(),
+      Home.routeName: const Home(),
     };
 
     try {
       nowPlayingModel = API().getNowPlaying();
-      // print(nowPlaying);
     } catch (error) {
       if (error is ErrorModel) {
-        print("error");
+        print("error 1");
+      }
+    }
+
+    try {
+      genreModel = API().getGenre();
+    } catch (error) {
+      if (error is ErrorModel) {
+        print("error 2");
       }
     }
   }
@@ -50,13 +59,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: const Color(0x000000FF)),
-      home: FutureBuilder<NowPlayingModel>(
-        future: nowPlayingModel,
-        builder:
-            (BuildContext context, AsyncSnapshot<NowPlayingModel> snapshot) {
+      home: FutureBuilder(
+        future: Future.wait([nowPlayingModel, genreModel]),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.data != null) {
             FlutterNativeSplash.remove();
-            return Home(nowPlayingModel: snapshot.data);
+            print(snapshot.data);
+            return Home(
+                nowPlayingModel: snapshot.data![0],
+                genreModel: snapshot.data![1]);
           } else {
             return Container();
           }

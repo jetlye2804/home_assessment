@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:home_assessment/models/error_model.dart';
+import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,7 +36,19 @@ class API {
     if (nowPlayingModel.toJson().isEmpty) {
       throw ErrorModel.fromJson(decodedResponse);
     }
-
     return nowPlayingModel;
+  }
+
+  Future<GenreModel> getGenre() async {
+    var path = '/3/genre/movie/list';
+    var requestUrl = Uri.https(_apiUrl!, path, {'api_key': _apiKey!});
+    var response = await getDataAPI(requestUrl);
+    var decodedResponse = json.decode(response.body);
+    final genreModel = GenreModel.fromJSON(decodedResponse);
+
+    if (genreModel.toJson().isEmpty) {
+      throw ErrorModel.fromJson(decodedResponse);
+    }
+    return genreModel;
   }
 }
