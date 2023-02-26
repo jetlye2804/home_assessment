@@ -141,15 +141,20 @@ class _HomeState extends State<Home> {
                       color: Colors.deepPurple),
                   child: Text(movieItem.originalLanguage!.toUpperCase()));
 
-              var genre = genreList
-                  .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
-              var genreTag = Container(
-                  margin: const EdgeInsets.only(right: 8, bottom: 8),
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.blueAccent),
-                  child: Text(genre.name!.toUpperCase()));
+              var genreTag = Container();
+
+              if (movieItem.genreIds != null &&
+                  movieItem.genreIds!.isNotEmpty) {
+                var genre = genreList
+                    .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
+                genreTag = Container(
+                    margin: const EdgeInsets.only(right: 8, bottom: 8),
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.blueAccent),
+                    child: Text(genre.name!.toUpperCase()));
+              }
 
               var votingColor = Colors.green;
               if (movieItem.voteAverage! < 7.0) {

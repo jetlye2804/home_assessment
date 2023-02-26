@@ -50,6 +50,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "countup",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/countup-0.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/crypto-3.0.2",
       "packageUri": "lib/",
@@ -150,6 +156,12 @@
       "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/image-4.0.15",
       "packageUri": "lib/",
       "languageVersion": "2.15"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/intl-0.18.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "js",
@@ -314,6 +326,54 @@
       "languageVersion": "2.15"
     },
     {
+      "name": "url_launcher",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher-6.1.10",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.24",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_ios-6.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "url_launcher_linux",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_linux-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_macos",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_macos-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_platform_interface",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_web",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_web-2.0.15",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_windows",
+      "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/url_launcher_windows-3.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///Users/jetlye/.pub-cache/hosted/pub.dev/vector_math-2.1.4",
       "packageUri": "lib/",
@@ -350,7 +410,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-02-26T01:12:26.939059Z",
+  "generated": "2023-02-26T11:04:08.547011Z",
   "generator": "pub",
   "generatorVersion": "2.19.2"
 }
