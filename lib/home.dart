@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
       nowPlayingModel = API().getNowPlaying();
     } catch (error) {
       if (error is ErrorModel) {
-        print("error 1");
+        print("error 2");
       }
     }
   }
@@ -95,7 +95,7 @@ class _HomeState extends State<Home> {
         builder:
             (BuildContext context, AsyncSnapshot<NowPlayingModel> snapshot) {
           if (!snapshot.hasData) {
-            print("No data");
+            print("No now playing data");
             return Container();
           }
 
@@ -160,8 +160,8 @@ class _HomeState extends State<Home> {
 
               return GestureDetector(
                 onTap: () {
-                  print(movieItem.id);
-                  Navigator.of(context).pushNamed(MovieDetail.routeName);
+                  Navigator.of(context).pushNamed(MovieDetail.routeName,
+                      arguments: movieItem.id);
                 },
                 child: Stack(
                   children: [

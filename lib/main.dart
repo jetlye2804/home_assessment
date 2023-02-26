@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       genreModel = API().getGenre();
     } catch (error) {
       if (error is ErrorModel) {
-        print("error 2");
+        print("error 1");
       }
     }
   }

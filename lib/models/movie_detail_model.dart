@@ -57,14 +57,17 @@ class MovieDetailModel {
   MovieDetailModel.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
-    belongsToCollection = json['belongs_to_collection'];
+    if (json['belongs_to_collection'] != null) {
+      belongsToCollection =
+          BelongsCollectionModel.fromJson(json['belongs_to_collection']);
+    }
     budget = json['budget'];
     if (json['genres'] != null) {
       genres = <GenreChildModel>[];
       json['genres']
           .forEach((item) => {genres!.add(GenreChildModel.fromJSON(item))});
     }
-    homepage = json['homepage'].toUri();
+    homepage = Uri.parse(json['homepage']);
     id = json['id'];
     imdbId = json['imdb_id'];
     originalLanguage = json['original_language'];
