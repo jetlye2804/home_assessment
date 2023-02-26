@@ -16,3 +16,12 @@ AppBar appBarWithBackButton(
     ),
   );
 }
+
+AppBar appBar(String titleText, Color color, BuildContext context) {
+  return AppBar(
+    elevation: 0,
+    backgroundColor: color,
+    centerTitle: true,
+    title: Text(titleText),
+  );
+}

@@ -5,14 +5,15 @@ import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/movie_detail.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+import 'app_drawer.dart';
 import 'models/error_model.dart';
 import 'models/genre_model.dart';
 
 class Home extends StatefulWidget {
   static var routeName = '/home';
-  final GenreModel? genreModel;
+  GenreModel? genreModel;
 
-  const Home({super.key, this.genreModel});
+  Home({super.key, this.genreModel});
 
   @override
   State<Home> createState() => _HomeState();
@@ -30,6 +31,16 @@ class _HomeState extends State<Home> {
         print("error 2");
       }
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (widget.genreModel == null) {
+      var genre = ModalRoute.of(context)!.settings.arguments as GenreModel;
+      widget.genreModel = genre;
+    }
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -95,7 +106,6 @@ class _HomeState extends State<Home> {
         builder:
             (BuildContext context, AsyncSnapshot<NowPlayingModel> snapshot) {
           if (!snapshot.hasData) {
-            print("No now playing data");
             return Container();
           }
 
@@ -232,89 +242,90 @@ class _HomeState extends State<Home> {
         });
   }
 
+  Widget paginationButtonWidget() {
+    return Row(
+      children: [
+        Expanded(
+            child: Container(
+          margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: currentPage > 1
+                    ? () {
+                        refreshNowShowingMovie('back');
+                      }
+                    : null,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      currentPage > 1 ? Colors.deepPurple : Colors.grey),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      currentPage > 1 ? Colors.white : Colors.black),
+                ),
+                child: const Text(
+                  'Back',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+              Text("$currentPage"),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.deepPurple),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
+                ),
+                onPressed: () {
+                  refreshNowShowingMovie('next');
+                },
+                child: const Text(
+                  'Next',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              )
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget homeWidget() {
+    return Container(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Row(
+            children: [
+              Expanded(
+                  child: Container(
+                margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+                child: Text(
+                  "Now Showing",
+                  style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w700,
+                  )),
+                ),
+              )),
+            ],
+          ),
+          paginationButtonWidget(),
+          nowPlayingWidget(),
+        ]));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: AppDrawer(
+          genreModel: widget.genreModel,
+        ),
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
           title: const Text("Jet's Movie App"),
         ),
-        body: Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Text(
-                          "Now Showing",
-                          style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                          )),
-                        ),
-                      )),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              onPressed: currentPage > 1
-                                  ? () {
-                                      refreshNowShowingMovie('back');
-                                    }
-                                  : null,
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        currentPage > 1
-                                            ? Colors.deepPurple
-                                            : Colors.grey),
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        currentPage > 1
-                                            ? Colors.white
-                                            : Colors.black),
-                              ),
-                              child: const Text(
-                                'Back',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            ),
-                            Text("$currentPage"),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.deepPurple),
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.white),
-                              ),
-                              onPressed: () {
-                                refreshNowShowingMovie('next');
-                              },
-                              child: const Text(
-                                'Next',
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                            )
-                          ],
-                        ),
-                      )),
-                    ],
-                  ),
-                  nowPlayingWidget(),
-                ])));
+        body: homeWidget());
   }
 }

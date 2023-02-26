@@ -9,6 +9,7 @@ import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/movie_detail.dart';
 import 'package:home_assessment/page_transition.dart';
 import 'package:home_assessment/singleton_util.dart';
+import 'package:home_assessment/top_ten_movie.dart';
 
 import 'models/error_model.dart';
 
@@ -31,10 +32,12 @@ class MyApp extends StatelessWidget {
     routes = {
       Home.routeName: Home(),
       MovieDetail.routeName: MovieDetail(),
+      TopTenMovie.routeName: TopTenMovie(),
     };
 
     try {
       genreModel = API().getGenre();
+      API().login();
     } catch (error) {
       if (error is ErrorModel) {
         print("error 1");
