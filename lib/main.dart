@@ -23,22 +23,13 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   late BuildContext context;
-  late Future<NowPlayingModel> nowPlayingModel;
   late Future<GenreModel> genreModel;
   Map<String, Widget>? routes;
 
   Future<void> initialization() async {
     routes = {
-      Home.routeName: const Home(),
+      Home.routeName: Home(),
     };
-
-    try {
-      nowPlayingModel = API().getNowPlaying();
-    } catch (error) {
-      if (error is ErrorModel) {
-        print("error 1");
-      }
-    }
 
     try {
       genreModel = API().getGenre();
@@ -60,14 +51,12 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           scaffoldBackgroundColor: const Color(0x000000FF)),
       home: FutureBuilder(
-        future: Future.wait([nowPlayingModel, genreModel]),
+        future: Future.wait([genreModel]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.data != null) {
             FlutterNativeSplash.remove();
             print(snapshot.data);
-            return Home(
-                nowPlayingModel: snapshot.data![0],
-                genreModel: snapshot.data![1]);
+            return Home(genreModel: snapshot.data![0]);
           } else {
             return Container();
           }

@@ -105,7 +105,7 @@ class NowPlayingMovieData {
     backdropPath = json['backdrop_path'];
 
     var genreIdsFromJson = json['genre_ids'];
-    List<int> genreIdsList = new List<int>.from(genreIdsFromJson);
+    List<int> genreIdsList = List<int>.from(genreIdsFromJson);
     genreIds = genreIdsList;
 
     id = json['id'];
@@ -117,7 +117,13 @@ class NowPlayingMovieData {
     releaseDate = json['release_date'];
     title = json['title'];
     video = json['video'];
-    voteAverage = json['vote_average'];
+
+    if (json['vote_average'] is int) {
+      voteAverage = json['vote_average'].toDouble();
+    } else {
+      voteAverage = json['vote_average'];
+    }
+
     voteCount = json['vote_count'];
   }
 
