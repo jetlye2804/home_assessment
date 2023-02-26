@@ -93,7 +93,7 @@ class _MovieDetail extends State<MovieDetail> {
         Container(
           margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
           child: Text(
-            tagline != null ? tagline! : "",
+            tagline ?? "",
             style: GoogleFonts.poppins(
                 textStyle: const TextStyle(
               fontSize: 16,
