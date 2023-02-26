@@ -2,14 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:home_assessment/api.dart';
+import 'package:home_assessment/utils/api.dart';
 import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:home_assessment/views/home.dart';
 import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/views/movie_detail.dart';
-import 'package:home_assessment/page_transition.dart';
-import 'package:home_assessment/singleton_util.dart';
+import 'package:home_assessment/utils/page_transition.dart';
 import 'package:home_assessment/views/top_ten_movie.dart';
 
 import 'models/error_model.dart';

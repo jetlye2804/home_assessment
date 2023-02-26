@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_assessment/api.dart';
+import 'package:home_assessment/utils/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
-import 'package:home_assessment/views/common_widget.dart';
+import 'package:home_assessment/views/base/common_widget.dart';
 import 'package:home_assessment/views/movie_detail.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import 'app_drawer.dart';
+import 'base/app_drawer.dart';
 import '../models/error_model.dart';
 import '../models/genre_model.dart';
 
@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
               child: GridView.builder(
             itemCount: englishMovieList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 1 / 2.6,
+                mainAxisExtent: 550,
                 crossAxisCount: 2,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0),

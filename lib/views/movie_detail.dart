@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_assessment/api.dart';
-import 'package:home_assessment/views/customized_app_bar.dart';
+import 'package:home_assessment/utils/api.dart';
+import 'package:home_assessment/views/base/customized_app_bar.dart';
 import 'package:home_assessment/models/movie_detail_model.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,8 +12,8 @@ import '../models/genre_model.dart';
 
 import 'package:intl/intl.dart';
 
-import '../storage_manager.dart';
-import 'alert_dialog.dart';
+import '../utils/storage_manager.dart';
+import 'base/alert_dialog.dart';
 
 class MovieDetail extends StatefulWidget {
   static var routeName = '/movie_detail';
@@ -298,7 +298,7 @@ class _MovieDetail extends State<MovieDetail> {
                     end: movieDetail.budget! > 0
                         ? movieDetail.budget!.toDouble()
                         : 0,
-                    duration: const Duration(seconds: 3),
+                    duration: const Duration(seconds: 5),
                     separator: ',',
                     prefix: '\$',
                     style: GoogleFonts.poppins(
@@ -314,7 +314,7 @@ class _MovieDetail extends State<MovieDetail> {
                 Countup(
                     begin: 0,
                     end: movieDetail.revenue!.toDouble(),
-                    duration: const Duration(seconds: 3),
+                    duration: const Duration(seconds: 5),
                     separator: ',',
                     prefix: '\$',
                     style: GoogleFonts.poppins(

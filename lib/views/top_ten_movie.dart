@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_assessment/views/common_widget.dart';
-import 'package:home_assessment/views/customized_app_bar.dart';
+import 'package:home_assessment/views/base/common_widget.dart';
+import 'package:home_assessment/views/base/customized_app_bar.dart';
 import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../api.dart';
-import 'app_drawer.dart';
+import '../utils/api.dart';
+import 'base/app_drawer.dart';
 import '../models/error_model.dart';
 import '../models/genre_model.dart';
 import 'movie_detail.dart';
@@ -105,7 +105,7 @@ class _TopTenMovieState extends State<TopTenMovie> {
               child: GridView.builder(
             itemCount: englishMovieList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 1 / 2.6,
+                mainAxisExtent: 550,
                 crossAxisCount: 2,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0),

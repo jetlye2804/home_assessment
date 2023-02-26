@@ -7,11 +7,11 @@ import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/movie_detail_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/models/top_ten_movie_model.dart';
-import 'package:home_assessment/storage_manager.dart';
+import 'package:home_assessment/utils/storage_manager.dart';
 import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:http/http.dart' as http;
 
-import 'models/favorite_movie_model.dart';
+import '../models/favorite_movie_model.dart';
 
 class API {
   final String? _apiKey = dotenv.env['MOVIE_API_KEY'];
