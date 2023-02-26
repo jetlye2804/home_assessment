@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:home_assessment/top_ten_movie.dart';
+import 'package:home_assessment/views/top_ten_movie.dart';
 
 import 'home.dart';
-import 'models/genre_model.dart';
+import '../models/genre_model.dart';
 
 class AppDrawer extends StatefulWidget {
   final GenreModel? genreModel;

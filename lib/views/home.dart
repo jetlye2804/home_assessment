@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
-import 'package:home_assessment/movie_detail.dart';
+import 'package:home_assessment/views/movie_detail.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import 'app_drawer.dart';
-import 'models/error_model.dart';
-import 'models/genre_model.dart';
+import '../models/error_model.dart';
+import '../models/genre_model.dart';
 
 class Home extends StatefulWidget {
   static var routeName = '/home';

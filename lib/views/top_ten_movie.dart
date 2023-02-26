@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_assessment/customized_app_bar.dart';
+import 'package:home_assessment/views/customized_app_bar.dart';
 import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import 'api.dart';
+import '../api.dart';
 import 'app_drawer.dart';
-import 'models/error_model.dart';
-import 'models/genre_model.dart';
+import '../models/error_model.dart';
+import '../models/genre_model.dart';
 import 'movie_detail.dart';
 
 class TopTenMovie extends StatefulWidget {

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/api.dart';
-import 'package:home_assessment/customized_app_bar.dart';
+import 'package:home_assessment/views/customized_app_bar.dart';
 import 'package:home_assessment/models/movie_detail_model.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:countup/countup.dart';
 
-import 'models/error_model.dart';
-import 'models/genre_model.dart';
+import '../models/error_model.dart';
+import '../models/genre_model.dart';
 
 import 'package:intl/intl.dart';
 
