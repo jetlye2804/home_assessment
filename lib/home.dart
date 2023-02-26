@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
+import 'package:home_assessment/movie_detail.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:http/http.dart' as http;
 
 import 'models/error_model.dart';
 import 'models/genre_model.dart';
@@ -158,63 +158,69 @@ class _HomeState extends State<Home> {
                 votingColor = Colors.red;
               }
 
-              print(movieItem.posterPath);
-
-              return Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: const Color.fromARGB(255, 52, 52, 52)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20)),
-                            child: movieItem.posterPath != null
-                                ? posterContainerWidget(movieItem.posterPath)
-                                : noPosterWidget()),
-                        Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(movieItem.originalTitle!,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400)),
-                                Container(
-                                  padding: const EdgeInsets.only(
-                                      top: 8.0, bottom: 8.0),
-                                  child: Text(movieItem.releaseDate!),
-                                ),
-                                Container(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Row(
-                                      children: [adultTag, languageTag],
-                                    )),
-                                genreTag
-                              ],
-                            )),
-                      ],
+              return GestureDetector(
+                onTap: () {
+                  print(movieItem.id);
+                  Navigator.of(context).pushNamed(MovieDetail.routeName);
+                },
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: const Color.fromARGB(255, 52, 52, 52)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20)),
+                              child: movieItem.posterPath != null
+                                  ? posterContainerWidget(movieItem.posterPath)
+                                  : noPosterWidget()),
+                          Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(movieItem.originalTitle!,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400)),
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, bottom: 8.0),
+                                    child: Text(movieItem.releaseDate!),
+                                  ),
+                                  Container(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Row(
+                                        children: [adultTag, languageTag],
+                                      )),
+                                  genreTag
+                                ],
+                              )),
+                        ],
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    right: 16.0,
-                    bottom: 16.0,
-                    child: CircularPercentIndicator(
-                      radius: 28.0,
-                      lineWidth: 4.0,
-                      animation: true,
-                      percent: (movieItem.voteAverage! / 10),
-                      center: Text("${(movieItem.voteAverage! * 10).round()}%"),
-                      circularStrokeCap: CircularStrokeCap.round,
-                      progressColor: votingColor,
-                    ),
-                  )
-                ],
+                    Positioned(
+                      right: 16.0,
+                      bottom: 16.0,
+                      child: CircularPercentIndicator(
+                        radius: 28.0,
+                        lineWidth: 4.0,
+                        animation: true,
+                        percent: (movieItem.voteAverage! / 10),
+                        center:
+                            Text("${(movieItem.voteAverage! * 10).round()}%"),
+                        circularStrokeCap: CircularStrokeCap.round,
+                        progressColor: votingColor,
+                      ),
+                    )
+                  ],
+                ),
               );
             },
           ));

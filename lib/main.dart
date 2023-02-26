@@ -6,6 +6,7 @@ import 'package:home_assessment/api.dart';
 import 'package:home_assessment/home.dart';
 import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
+import 'package:home_assessment/movie_detail.dart';
 import 'package:home_assessment/page_transition.dart';
 import 'package:home_assessment/singleton_util.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   Future<void> initialization() async {
     routes = {
       Home.routeName: Home(),
+      MovieDetail.routeName: MovieDetail(),
     };
 
     try {
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: const Color(0x000000FF)),
+          scaffoldBackgroundColor: const Color(0xFF000000)),
       home: FutureBuilder(
         future: Future.wait([genreModel]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
