@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home_assessment/views/common_widget.dart';
 import 'package:home_assessment/views/customized_app_bar.dart';
 import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -73,30 +74,6 @@ class _TopTenMovieState extends State<TopTenMovie> {
     });
   }
 
-  Widget posterContainerWidget(posterPath) {
-    return Image.network(
-      "https://www.themoviedb.org/t/p/w440_and_h660_face/$posterPath",
-      fit: BoxFit.cover,
-      height: 300,
-      width: 200,
-      errorBuilder:
-          (BuildContext context, Object exception, StackTrace? stackTrace) {
-        return noPosterWidget();
-      },
-    );
-  }
-
-  Widget noPosterWidget() {
-    return Container(
-      color: Colors.blueGrey,
-      height: 300,
-      width: 200,
-      child: const Center(
-        child: Text("Image Not Found"),
-      ),
-    );
-  }
-
   Widget topTenGridWidget() {
     return FutureBuilder<TopTenMovieModel>(
         future: topTenMovieModel,
@@ -106,10 +83,10 @@ class _TopTenMovieState extends State<TopTenMovie> {
             return Container();
           }
 
-          var nowPlaying = snapshot.data!;
+          var topTen = snapshot.data!;
           // Filter all non-english movie, especially russian movies
           // Intended to do so
-          var englishMovieList = nowPlaying.results!.where((movie) {
+          var englishMovieList = topTen.results!.where((movie) {
             return movie.originalLanguage == 'en';
           }).toList();
           var genre = genreModel;
@@ -189,8 +166,9 @@ class _TopTenMovieState extends State<TopTenMovie> {
                                   topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20)),
                               child: movieItem.posterPath != null
-                                  ? posterContainerWidget(movieItem.posterPath)
-                                  : noPosterWidget()),
+                                  ? CommonWidget().posterContainerWidget(
+                                      movieItem.posterPath)
+                                  : CommonWidget().noPosterWidget()),
                           Container(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(

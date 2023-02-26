@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
+import 'package:home_assessment/views/common_widget.dart';
 import 'package:home_assessment/views/movie_detail.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -74,30 +75,6 @@ class _HomeState extends State<Home> {
       currentPage = count;
       nowPlayingModel = refreshedData;
     });
-  }
-
-  Widget posterContainerWidget(posterPath) {
-    return Image.network(
-      "https://www.themoviedb.org/t/p/w440_and_h660_face/$posterPath",
-      fit: BoxFit.cover,
-      height: 300,
-      width: 200,
-      errorBuilder:
-          (BuildContext context, Object exception, StackTrace? stackTrace) {
-        return noPosterWidget();
-      },
-    );
-  }
-
-  Widget noPosterWidget() {
-    return Container(
-      color: Colors.blueGrey,
-      height: 300,
-      width: 200,
-      child: const Center(
-        child: Text("Image Not Found"),
-      ),
-    );
   }
 
   Widget nowPlayingWidget() {
@@ -192,8 +169,9 @@ class _HomeState extends State<Home> {
                                   topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20)),
                               child: movieItem.posterPath != null
-                                  ? posterContainerWidget(movieItem.posterPath)
-                                  : noPosterWidget()),
+                                  ? CommonWidget().posterContainerWidget(
+                                      movieItem.posterPath)
+                                  : CommonWidget().noPosterWidget()),
                           Container(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
