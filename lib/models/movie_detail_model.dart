@@ -53,6 +53,102 @@ class MovieDetailModel {
       this.video,
       this.voteAverage,
       this.voteCount});
+
+  MovieDetailModel.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    belongsToCollection = json['belongs_to_collection'];
+    budget = json['budget'];
+    if (json['genres'] != null) {
+      genres = <GenreChildModel>[];
+      json['genres']
+          .forEach((item) => {genres!.add(GenreChildModel.fromJSON(item))});
+    }
+    homepage = json['homepage'].toUri();
+    id = json['id'];
+    imdbId = json['imdb_id'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+
+    if (json['production_companies'] != null) {
+      productionCompanies = <ProductionCompanyModel>[];
+      json['production_companies'].forEach((item) =>
+          {productionCompanies!.add(ProductionCompanyModel.fromJson(item))});
+    }
+
+    if (json['production_countries'] != null) {
+      productionCountries = <ProductionCountryModel>[];
+      json['production_countries'].forEach((item) =>
+          {productionCountries!.add(ProductionCountryModel.fromJson(item))});
+    }
+
+    releaseDate = json['release_date'];
+    revenue = json['revenue'];
+    runtime = json['runtime'];
+    if (json['spoken_languages'] != null) {
+      spokenLanguages = <SpokenLanguageModel>[];
+      json['spoken_languages'].forEach(
+          (item) => {spokenLanguages!.add(SpokenLanguageModel.fromJson(item))});
+    }
+
+    status = json['status'];
+    tagline = json['tagline'];
+    title = json['title'];
+    video = json['video'];
+    if (json['vote_average'] is int) {
+      voteAverage = json['vote_average'].toDouble();
+    } else {
+      voteAverage = json['vote_average'];
+    }
+
+    voteCount = json['vote_count'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['adult'] = adult;
+    data['backdrop_path'] = backdropPath;
+    if (belongsToCollection != null) {
+      data['belongs_to_collection'] = belongsToCollection!.toJson();
+    }
+    data['budget'] = budget;
+    if (genres != null) {
+      data['genres'] = genres!.map((item) => item.toJson()).toList();
+    }
+    data['homepage'] = homepage.toString();
+    data['id'] = id;
+    data['imdb_id'] = imdbId;
+    data['original_language'] = originalLanguage;
+    data['original_title'] = originalTitle;
+    data['overview'] = overview;
+    data['popularity'] = popularity;
+    data['poster_path'] = posterPath;
+    if (productionCompanies != null) {
+      data['production_companies'] =
+          productionCompanies!.map((item) => item.toJson()).toList();
+    }
+    if (productionCountries != null) {
+      data['production_countries'] =
+          productionCountries!.map((item) => item.toJson()).toList();
+    }
+    data['release_date'] = releaseDate;
+    data['revenue'] = revenue;
+    data['runtime'] = runtime;
+    if (spokenLanguages != null) {
+      data['spoken_languages'] =
+          spokenLanguages!.map((item) => item.toJson()).toList();
+    }
+    data['status'] = status;
+    data['tagline'] = tagline;
+    data['title'] = title;
+    data['video'] = video;
+    data['vote_average'] = voteAverage;
+    data['vote_count'] = voteCount;
+    return data;
+  }
 }
 
 class BelongsCollectionModel {
