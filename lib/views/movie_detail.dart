@@ -25,7 +25,10 @@ class MovieDetail extends StatefulWidget {
 }
 
 class _MovieDetail extends State<MovieDetail> {
-  late int movieId = ModalRoute.of(context)!.settings.arguments as int;
+  late int movieId =
+      (ModalRoute.of(context)!.settings.arguments as Map)['movie_id'] as int;
+  late bool? hasAddedFav =
+      (ModalRoute.of(context)!.settings.arguments as Map)['has_added'] as bool;
   Future<MovieDetailModel>? movieDetailModel;
   bool isLoad = true;
   String? sessionId;
@@ -364,6 +367,9 @@ class _MovieDetail extends State<MovieDetail> {
       API().saveFavoriteMovie(accountId!, sessionId!, movieId, true);
       showDoneDialog(context, 'Successful',
           'This movie has been saved to your favorite list.');
+      setState(() {
+        hasAddedFav = true;
+      });
     } catch (error) {
       showDoneDialog(
           context, 'Unsuccessful', 'Unable to save to favorite list.');
@@ -396,7 +402,7 @@ class _MovieDetail extends State<MovieDetail> {
             backgroundColor: MaterialStateProperty.all<Color>(Colors.yellow),
           );
 
-          if (accountId == null || sessionId == null) {
+          if (accountId == null || sessionId == null || hasAddedFav == true) {
             favSaveButtonStyle = ButtonStyle(
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
@@ -471,7 +477,9 @@ class _MovieDetail extends State<MovieDetail> {
                         ElevatedButton(
                           style: favSaveButtonStyle,
                           onPressed: () {
-                            if (accountId != null && sessionId != null) {
+                            if (accountId != null &&
+                                sessionId != null &&
+                                hasAddedFav == null) {
                               saveFavorite(movieDetail.id!);
                             }
                           },

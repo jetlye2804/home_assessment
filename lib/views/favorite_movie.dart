@@ -160,8 +160,11 @@ class _FavoriteMovie extends State<FavoriteMovie> {
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed(MovieDetail.routeName,
-                      arguments: movieItem.id);
+                  Navigator.of(context)
+                      .pushNamed(MovieDetail.routeName, arguments: {
+                    'movie_id': movieItem.id,
+                    'has_added': true,
+                  });
                 },
                 child: Stack(
                   children: [

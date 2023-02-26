@@ -158,8 +158,10 @@ class _TopTenMovieState extends State<TopTenMovie> {
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushNamed(MovieDetail.routeName,
-                      arguments: movieItem.id);
+                  Navigator.of(context)
+                      .pushNamed(MovieDetail.routeName, arguments: {
+                    'movie_id': movieItem.id,
+                  });
                 },
                 child: Stack(
                   children: [

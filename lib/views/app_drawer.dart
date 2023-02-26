@@ -30,7 +30,8 @@ class _AppDrawerState extends State<AppDrawer> {
           child: Column(
             children: [
               ListTile(
-                title: const Text("Now Playing"),
+                title:
+                    const Text("Now Playing", style: TextStyle(fontSize: 20)),
                 onTap: () {
                   if (ModalRoute.of(context)!.settings.name != '/' &&
                       ModalRoute.of(context)!.settings.name != Home.routeName) {
@@ -51,7 +52,8 @@ class _AppDrawerState extends State<AppDrawer> {
                     Navigator.of(context).pop();
                   }
                 },
-                title: const Text("Top 10 Movies"),
+                title:
+                    const Text("Top 10 Movies", style: TextStyle(fontSize: 20)),
               ),
               ListTile(
                 onTap: () {
@@ -63,7 +65,8 @@ class _AppDrawerState extends State<AppDrawer> {
                     Navigator.of(context).pop();
                   }
                 },
-                title: const Text("My Favorite Movie"),
+                title: const Text("My Favorite Movie",
+                    style: TextStyle(fontSize: 20)),
               )
             ],
           ),
