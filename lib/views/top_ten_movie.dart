@@ -80,7 +80,16 @@ class _TopTenMovieState extends State<TopTenMovie> {
         builder:
             (BuildContext context, AsyncSnapshot<TopTenMovieModel> snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return Center(
+              child: Text(
+                "Loading List...",
+                style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                )),
+              ),
+            );
           }
 
           var topTen = snapshot.data!;

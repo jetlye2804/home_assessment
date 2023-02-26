@@ -12,6 +12,9 @@ import '../models/genre_model.dart';
 
 import 'package:intl/intl.dart';
 
+import '../storage_manager.dart';
+import 'alert_dialog.dart';
+
 class MovieDetail extends StatefulWidget {
   static var routeName = '/movie_detail';
 
@@ -23,16 +26,23 @@ class MovieDetail extends StatefulWidget {
 
 class _MovieDetail extends State<MovieDetail> {
   late int movieId = ModalRoute.of(context)!.settings.arguments as int;
-  late Future<MovieDetailModel> movieDetailModel;
+  Future<MovieDetailModel>? movieDetailModel;
   bool isLoad = true;
+  String? sessionId;
+  int? accountId;
 
   void initialization() async {
+    var sessionValue = await StorageManager.readData('session_id');
+    var accountValue = await StorageManager.readData('account_id');
+
+    setState(() {
+      sessionId = sessionValue;
+      accountId = accountValue;
+    });
+
     try {
       movieDetailModel = API().getMovieDetail(movieId.toString());
-      // movieDetailModel = API().getMovieDetail("76600");
     } catch (error) {
-      print('catched');
-      print(error);
       if (error is ErrorModel) {
         print("error 3");
       }
@@ -349,6 +359,17 @@ class _MovieDetail extends State<MovieDetail> {
     );
   }
 
+  void saveFavorite(int movieId) async {
+    try {
+      API().saveFavoriteMovie(accountId!, sessionId!, movieId, true);
+      showDoneDialog(context, 'Successful',
+          'This movie has been saved to your favorite list.');
+    } catch (error) {
+      showDoneDialog(
+          context, 'Unsuccessful', 'Unable to save to favorite list.');
+    }
+  }
+
   Widget movieDetailWidget() {
     return FutureBuilder<MovieDetailModel>(
         future: movieDetailModel,
@@ -369,6 +390,18 @@ class _MovieDetail extends State<MovieDetail> {
           }
 
           var movieDetail = snapshot.data!;
+
+          var favSaveButtonStyle = ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.yellow),
+          );
+
+          if (accountId == null || sessionId == null) {
+            favSaveButtonStyle = ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
+            );
+          }
 
           return SingleChildScrollView(
             child: Column(
@@ -435,6 +468,15 @@ class _MovieDetail extends State<MovieDetail> {
                                 adultTag(movieDetail.adult!)
                               ],
                             )),
+                        ElevatedButton(
+                          style: favSaveButtonStyle,
+                          onPressed: () {
+                            if (accountId != null && sessionId != null) {
+                              saveFavorite(movieDetail.id!);
+                            }
+                          },
+                          child: Text("Save to Favorite List"),
+                        ),
                         const Divider(
                           color: Colors.white,
                           thickness: 2.0,

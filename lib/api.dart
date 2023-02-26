@@ -166,6 +166,21 @@ class API {
     return favoriteMovieModel;
   }
 
+  saveFavoriteMovie(
+      int accountId, String sessionId, int movieId, bool save) async {
+    var path = '/3/account/$accountId/favorite';
+    var requestUrl = Uri.https(
+        _apiUrl!, path, {'api_key': _apiKey!, 'session_id': sessionId});
+    Map<String, dynamic> movieData = <String, dynamic>{};
+    movieData['media_type'] = 'movie';
+    movieData['media_id'] = movieId.toString();
+    movieData['favorite'] = save.toString();
+    var response = await postDataAPI(requestUrl, movieData);
+    var decodedResponse = json.decode(response.body);
+
+    return decodedResponse;
+  }
+
   Future<NowPlayingModel> getNowPlaying([String? page]) async {
     var path = '/3/movie/now_playing';
     var requestUrl =

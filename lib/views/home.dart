@@ -83,7 +83,16 @@ class _HomeState extends State<Home> {
         builder:
             (BuildContext context, AsyncSnapshot<NowPlayingModel> snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return Center(
+              child: Text(
+                "Loading List...",
+                style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                )),
+              ),
+            );
           }
 
           var nowPlaying = snapshot.data!;

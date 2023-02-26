@@ -7,6 +7,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../models/error_model.dart';
 import '../models/genre_model.dart';
+import 'alert_dialog.dart';
 import 'app_drawer.dart';
 import 'common_widget.dart';
 import 'customized_app_bar.dart';
@@ -24,7 +25,7 @@ class FavoriteMovie extends StatefulWidget {
 class _FavoriteMovie extends State<FavoriteMovie> {
   late GenreModel genreModel =
       ModalRoute.of(context)!.settings.arguments as GenreModel;
-  late Future<FavoriteMovieModel> favoriteMovieModel;
+  Future<FavoriteMovieModel>? favoriteMovieModel;
   int currentPage = 1;
   String? sessionId;
   int? accountId;
@@ -62,13 +63,35 @@ class _FavoriteMovie extends State<FavoriteMovie> {
     super.didChangeDependencies();
   }
 
+  void deleteFavorite(int movieId) async {
+    print('heh');
+    try {
+      API().saveFavoriteMovie(accountId!, sessionId!, movieId, false);
+      showDoneDialog(context, 'Successful',
+          'This movie has been removed to your favorite list.');
+    } catch (error) {
+      showDoneDialog(
+          context, 'Unsuccessful', 'Unable to remove from favorite list.');
+    }
+  }
+
   Widget favoriteGridWidget() {
     return FutureBuilder<FavoriteMovieModel>(
         future: favoriteMovieModel,
         builder:
             (BuildContext context, AsyncSnapshot<FavoriteMovieModel> snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return Center(
+              child: Text(
+                "Loading List...",
+                style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                )),
+              ),
+            );
+            ;
           }
 
           var favoriteMovie = snapshot.data!;
@@ -196,7 +219,28 @@ class _FavoriteMovie extends State<FavoriteMovie> {
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: votingColor,
                       ),
-                    )
+                    ),
+                    Positioned(
+                        right: 0.0,
+                        top: 0.0,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(Colors.red),
+                            ),
+                            onPressed: () {
+                              showConfirmationDialog(context, 'Remove movie',
+                                  'Are you sure to remove this movie from your favorite list?',
+                                  () {
+                                deleteFavorite(movieItem.id!);
+                              });
+                            },
+                            child: Container(),
+                          ),
+                        )),
                   ],
                 ),
               );
