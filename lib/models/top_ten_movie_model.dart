@@ -1,6 +1,6 @@
 class TopTenMovieModel {
   int? page;
-  List<NowPlayingMovieData>? results;
+  List<TopTenMovieData>? results;
   int? totalPages;
   int? totalResults;
 
@@ -12,9 +12,9 @@ class TopTenMovieModel {
   TopTenMovieModel.fromJSON(Map<String, dynamic> json) {
     page = json['page'];
     if (json['results'] != null) {
-      results = <NowPlayingMovieData>[];
-      json['results'].forEach(
-          (item) => {results!.add(NowPlayingMovieData.fromJson(item))});
+      results = <TopTenMovieData>[];
+      json['results']
+          .forEach((item) => {results!.add(TopTenMovieData.fromJson(item))});
     }
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
@@ -33,7 +33,7 @@ class TopTenMovieModel {
   }
 }
 
-class NowPlayingMovieData {
+class TopTenMovieData {
   bool? adult;
   String? backdropPath;
   List<int>? genreIds;
@@ -50,7 +50,7 @@ class NowPlayingMovieData {
   int? voteCount;
 
   // Constructor
-  NowPlayingMovieData(
+  TopTenMovieData(
       {this.adult,
       this.backdropPath,
       this.genreIds,
@@ -67,7 +67,7 @@ class NowPlayingMovieData {
       this.voteCount});
 
   // Convert JSON into model data
-  NowPlayingMovieData.fromJson(Map<String, dynamic> json) {
+  TopTenMovieData.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
 

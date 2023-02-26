@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:home_assessment/api.dart';
+import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:home_assessment/views/home.dart';
 import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       Home.routeName: Home(),
       MovieDetail.routeName: MovieDetail(),
       TopTenMovie.routeName: TopTenMovie(),
+      FavoriteMovie.routeName: FavoriteMovie(),
     };
 
     try {

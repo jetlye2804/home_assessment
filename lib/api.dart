@@ -8,7 +8,10 @@ import 'package:home_assessment/models/movie_detail_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:home_assessment/storage_manager.dart';
+import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:http/http.dart' as http;
+
+import 'models/favorite_movie_model.dart';
 
 class API {
   final String? _apiKey = dotenv.env['MOVIE_API_KEY'];
@@ -38,62 +41,129 @@ class API {
   }
 
   login() async {
-    await StorageManager.readData('session_id').then((value) async {
-      if (value != null) {
-        StorageManager.deleteData('session_id');
-        print("Deleted old session ID");
-      }
-    });
-
-    var requestTokenPath = '/3/authentication/token/new';
-    var requestTokenUrl =
-        Uri.https(_apiUrl!, requestTokenPath, {'api_key': _apiKey!});
-    var requestTokenResponse = await getDataAPI(requestTokenUrl);
-    var decodedRequestTokenResponse = json.decode(requestTokenResponse.body);
-
-    bool requestTokenSuccess = decodedRequestTokenResponse['success'];
-
-    if (requestTokenSuccess == false) {
-      throw decodedRequestTokenResponse['status_message'];
-    } else {
-      var requestToken = decodedRequestTokenResponse['request_token'];
-      var validateLoginPath = '/3/authentication/token/validate_with_login';
-      var validateLoginUrl =
-          Uri.https(_apiUrl!, validateLoginPath, {'api_key': _apiKey!});
-      Map<String, dynamic> loginData = <String, dynamic>{};
-      loginData['username'] = 'jetlye';
-      loginData['password'] = 'iamklpeople990428';
-      loginData['request_token'] = requestToken;
-      var validateLoginResponse =
-          await postDataAPI(validateLoginUrl, loginData);
-      var decodedValidateLoginResponse =
-          json.decode(validateLoginResponse.body);
-
-      bool validateLoginSuccess = decodedValidateLoginResponse['success'];
-
-      if (validateLoginSuccess == false) {
-        throw decodedValidateLoginResponse['status_message'];
+    var needToCreate = false;
+    var oldExpiryDate = await StorageManager.readData('expires_at');
+    if (oldExpiryDate != null) {
+      oldExpiryDate = oldExpiryDate.substring(0, oldExpiryDate.length - 4);
+      var timeZone = DateTime.now().timeZoneName;
+      int hour = int.parse(timeZone);
+      var parsedDate = DateTime.parse(oldExpiryDate);
+      var localizedDate = parsedDate.add(Duration(hours: hour));
+      var nowDate = DateTime.now();
+      if (nowDate.compareTo(localizedDate) >= 0) {
+        StorageManager.deleteData('expires_at');
+        print("Deleted old expiry date");
+        needToCreate = true;
       } else {
-        var successRequestToken = decodedValidateLoginResponse['request_token'];
-        var sessionPath = '/3/authentication/session/new';
-        var sessionUrl =
-            Uri.https(_apiUrl!, sessionPath, {'api_key': _apiKey!});
-        Map<String, dynamic> sessionData = <String, dynamic>{};
-        sessionData['request_token'] = successRequestToken;
-        var sessionResponse = await postDataAPI(sessionUrl, sessionData);
-        var decodedSessionResponse = json.decode(sessionResponse.body);
+        print("Request token still valid");
+      }
+    } else {
+      needToCreate = true;
+    }
 
-        bool sessionSuccess = decodedSessionResponse['success'];
+    if (needToCreate == true) {
+      await StorageManager.readData('request_token').then((value) async {
+        if (value != null) {
+          StorageManager.deleteData('request_token');
+          print("Deleted old request token");
+        }
+      });
+      await StorageManager.readData('session_id').then((value) async {
+        if (value != null) {
+          StorageManager.deleteData('session_id');
+          print("Deleted old session ID");
+        }
+      });
+      await StorageManager.readData('account_id').then((value) async {
+        if (value != null) {
+          StorageManager.deleteData('account_id');
+          print("Deleted old account ID");
+        }
+      });
 
-        if (sessionSuccess == false) {
-          throw decodedSessionResponse['status_message'];
+      var requestTokenPath = '/3/authentication/token/new';
+      var requestTokenUrl =
+          Uri.https(_apiUrl!, requestTokenPath, {'api_key': _apiKey!});
+      var requestTokenResponse = await getDataAPI(requestTokenUrl);
+      var decodedRequestTokenResponse = json.decode(requestTokenResponse.body);
+
+      bool requestTokenSuccess = decodedRequestTokenResponse['success'];
+
+      if (requestTokenSuccess == false) {
+        throw decodedRequestTokenResponse['status_message'];
+      } else {
+        var requestToken = decodedRequestTokenResponse['request_token'];
+        var tokenExpire = decodedRequestTokenResponse['expires_at'];
+        StorageManager.saveData('request_token', requestToken);
+        StorageManager.saveData('expires_at', tokenExpire);
+        print("Saved new request token and it's expiry date");
+        var validateLoginPath = '/3/authentication/token/validate_with_login';
+        var validateLoginUrl =
+            Uri.https(_apiUrl!, validateLoginPath, {'api_key': _apiKey!});
+        Map<String, dynamic> loginData = <String, dynamic>{};
+        loginData['username'] = 'jetlye';
+        loginData['password'] = 'iamklpeople990428';
+        loginData['request_token'] = requestToken;
+        var validateLoginResponse =
+            await postDataAPI(validateLoginUrl, loginData);
+        var decodedValidateLoginResponse =
+            json.decode(validateLoginResponse.body);
+
+        bool validateLoginSuccess = decodedValidateLoginResponse['success'];
+
+        if (validateLoginSuccess == false) {
+          throw decodedValidateLoginResponse['status_message'];
         } else {
-          var sessionId = decodedSessionResponse['session_id'];
-          StorageManager.saveData('session_id', sessionId);
-          print("Saved new session ID");
+          var successRequestToken =
+              decodedValidateLoginResponse['request_token'];
+          var sessionPath = '/3/authentication/session/new';
+          var sessionUrl =
+              Uri.https(_apiUrl!, sessionPath, {'api_key': _apiKey!});
+          Map<String, dynamic> sessionData = <String, dynamic>{};
+          sessionData['request_token'] = successRequestToken;
+          var sessionResponse = await postDataAPI(sessionUrl, sessionData);
+          var decodedSessionResponse = json.decode(sessionResponse.body);
+
+          bool sessionSuccess = decodedSessionResponse['success'];
+
+          if (sessionSuccess == false) {
+            throw decodedSessionResponse['status_message'];
+          } else {
+            var sessionId = decodedSessionResponse['session_id'];
+
+            var accountPath = '/3/account';
+            var accountUrl = Uri.https(_apiUrl!, accountPath,
+                {'api_key': _apiKey!, 'session_id': sessionId});
+            var accountResponse = await getDataAPI(accountUrl);
+            var decodedAccountResponse = json.decode(accountResponse.body);
+
+            if (decodedAccountResponse['status_code'] != null) {
+              throw decodedAccountResponse['status_message'];
+            } else {
+              var accountId = decodedAccountResponse['id'];
+              StorageManager.saveData('session_id', sessionId);
+              StorageManager.saveData('account_id', accountId);
+              print("Saved new session ID and account ID");
+            }
+          }
         }
       }
     }
+  }
+
+  Future<FavoriteMovieModel> getFavoriteMovie(int accountId, String sessionId,
+      [String? page]) async {
+    var path = '/3/account/$accountId/favorite/movies';
+    var requestUrl = Uri.https(_apiUrl!, path,
+        {'api_key': _apiKey!, 'session_id': sessionId, 'page': page ?? '1'});
+    var response = await getDataAPI(requestUrl);
+    var decodedResponse = json.decode(response.body);
+    final favoriteMovieModel = FavoriteMovieModel.fromJSON(decodedResponse);
+
+    if (favoriteMovieModel.toJson().isEmpty) {
+      throw ErrorModel.fromJson(decodedResponse);
+    }
+    return favoriteMovieModel;
   }
 
   Future<NowPlayingModel> getNowPlaying([String? page]) async {

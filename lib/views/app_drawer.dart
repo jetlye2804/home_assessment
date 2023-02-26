@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:home_assessment/views/top_ten_movie.dart';
 
 import 'home.dart';
@@ -50,7 +51,19 @@ class _AppDrawerState extends State<AppDrawer> {
                     Navigator.of(context).pop();
                   }
                 },
-                title: Text("Top 10 Movies"),
+                title: const Text("Top 10 Movies"),
+              ),
+              ListTile(
+                onTap: () {
+                  if (ModalRoute.of(context)!.settings.name !=
+                      FavoriteMovie.routeName) {
+                    Navigator.of(context).pushNamed(FavoriteMovie.routeName,
+                        arguments: widget.genreModel);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+                title: const Text("My Favorite Movie"),
               )
             ],
           ),

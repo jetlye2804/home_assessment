@@ -265,7 +265,10 @@ class _TopTenMovieState extends State<TopTenMovie> {
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
-              Text("$currentPage"),
+              Text(
+                "$currentPage",
+                style: const TextStyle(fontSize: 24),
+              ),
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
