@@ -239,8 +239,8 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.deepPurple,
           title: const Text("Jet's Movie App"),
         ),
-        body: SafeArea(
-            minimum: const EdgeInsets.all(16.0),
+        body: Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
