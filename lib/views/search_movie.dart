@@ -116,7 +116,7 @@ class _SearchMovieState extends State<SearchMovie> {
           paginateSearchedMovie('back', text);
         }, () {
           paginateSearchedMovie('next', text);
-        });
+        }, snapshot.data!.totalPages);
       },
     );
   }

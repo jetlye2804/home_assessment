@@ -143,8 +143,8 @@ class CommonWidget {
         child: Text(text.toUpperCase()));
   }
 
-  Widget paginationButtonWidget(
-      int currentPage, VoidCallback backFunc, VoidCallback nextFunc) {
+  Widget paginationButtonWidget(int currentPage, VoidCallback backFunc,
+      VoidCallback nextFunc, int? totalPage) {
     return Row(
       children: [
         Expanded(
@@ -171,19 +171,23 @@ class CommonWidget {
                 ),
               ),
               Text(
-                "$currentPage",
+                "$currentPage / $totalPage",
                 style: const TextStyle(fontSize: 24),
               ),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.deepPurple),
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      currentPage < totalPage!
+                          ? Colors.deepPurple
+                          : Colors.grey),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      currentPage < totalPage ? Colors.white : Colors.black),
                 ),
-                onPressed: () {
-                  nextFunc();
-                },
+                onPressed: currentPage < totalPage
+                    ? () {
+                        nextFunc();
+                      }
+                    : null,
                 child: const Text(
                   'Next',
                   style: TextStyle(fontSize: 16.0),

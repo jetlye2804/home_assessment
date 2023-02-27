@@ -144,6 +144,34 @@ class _HomeState extends State<Home> {
         });
   }
 
+  Widget widgetPaginationWidget() {
+    return FutureBuilder<NowPlayingModel>(
+      future: nowPlayingModel,
+      builder: (BuildContext context, AsyncSnapshot<NowPlayingModel> snapshot) {
+        var dataExist = false;
+
+        if (!snapshot.hasData) {
+          dataExist = false;
+        } else {
+          if (snapshot.data!.totalResults! > 0) {
+            dataExist = true;
+          } else {
+            dataExist = false;
+          }
+        }
+        if (dataExist == false) {
+          return Container();
+        }
+
+        return CommonWidget().paginationButtonWidget(currentPage, () {
+          refreshNowShowingMovie('back');
+        }, () {
+          refreshNowShowingMovie('next');
+        }, snapshot.data!.totalPages);
+      },
+    );
+  }
+
   Widget homeWidget() {
     return Container(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -164,11 +192,7 @@ class _HomeState extends State<Home> {
               )),
             ],
           ),
-          CommonWidget().paginationButtonWidget(currentPage, () {
-            refreshNowShowingMovie('back');
-          }, () {
-            refreshNowShowingMovie('next');
-          }),
+          widgetPaginationWidget(),
           nowPlayingWidget(),
         ]));
   }

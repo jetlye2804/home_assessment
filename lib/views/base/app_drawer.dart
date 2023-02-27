@@ -52,8 +52,8 @@ class _AppDrawerState extends State<AppDrawer> {
                     Navigator.of(context).pop();
                   }
                 },
-                title:
-                    const Text("Top 10 Movies", style: TextStyle(fontSize: 20)),
+                title: const Text("Top Rating Movies",
+                    style: TextStyle(fontSize: 20)),
               ),
               ListTile(
                 onTap: () {

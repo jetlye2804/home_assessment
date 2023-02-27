@@ -174,7 +174,8 @@ class _FavoriteMovie extends State<FavoriteMovie> {
     return Scaffold(
         drawer: AppDrawer(genreModel: genreModel),
         backgroundColor: const Color(0xFF000000),
-        appBar: appBar("My Favorite Movie", Colors.deepPurple, context),
+        appBar: appBarWithSearchButton(
+            "My Favorite Movie", Colors.deepPurple, context, genreModel),
         body: myFavoriteWidget());
   }
 }

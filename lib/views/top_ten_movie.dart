@@ -141,6 +141,34 @@ class _TopTenMovieState extends State<TopTenMovie> {
         });
   }
 
+  Widget widgetPaginationWidget() {
+    return FutureBuilder<MovieModel>(
+      future: topTenMovieModel,
+      builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
+        var dataExist = false;
+
+        if (!snapshot.hasData) {
+          dataExist = false;
+        } else {
+          if (snapshot.data!.totalResults! > 0) {
+            dataExist = true;
+          } else {
+            dataExist = false;
+          }
+        }
+        if (dataExist == false) {
+          return Container();
+        }
+
+        return CommonWidget().paginationButtonWidget(currentPage, () {
+          refreshTopTenMovie('back');
+        }, () {
+          refreshTopTenMovie('next');
+        }, snapshot.data!.totalPages!);
+      },
+    );
+  }
+
   Widget topTenWidget() {
     return SafeArea(
         child: Container(
@@ -154,7 +182,7 @@ class _TopTenMovieState extends State<TopTenMovie> {
                           child: Container(
                         margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
                         child: Text(
-                          "Top 10 Movies",
+                          "Top Rating Movies",
                           style: GoogleFonts.poppins(
                               textStyle: const TextStyle(
                             fontSize: 36,
@@ -164,11 +192,7 @@ class _TopTenMovieState extends State<TopTenMovie> {
                       )),
                     ],
                   ),
-                  CommonWidget().paginationButtonWidget(currentPage, () {
-                    refreshTopTenMovie('back');
-                  }, () {
-                    refreshTopTenMovie('next');
-                  }),
+                  widgetPaginationWidget(),
                   topTenGridWidget()
                 ])));
   }
@@ -178,7 +202,8 @@ class _TopTenMovieState extends State<TopTenMovie> {
     return Scaffold(
         drawer: AppDrawer(genreModel: genreModel),
         backgroundColor: const Color(0xFF000000),
-        appBar: appBar("Top 10 Movies", Colors.deepPurple, context),
+        appBar: appBarWithSearchButton(
+            "Top Rating Movies", Colors.deepPurple, context, genreModel),
         body: topTenWidget());
   }
 }
