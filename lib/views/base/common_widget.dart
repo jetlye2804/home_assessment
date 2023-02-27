@@ -123,14 +123,14 @@ class CommonWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: const Color.fromARGB(255, 168, 0, 0)),
-          child: Text("Adult".toUpperCase()));
+          child: Text("NSFW".toUpperCase()));
     } else {
       return Container(
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: const Color.fromARGB(255, 0, 168, 31)),
-          child: Text("Non-Adult".toUpperCase()));
+          child: Text("SFW".toUpperCase()));
     }
   }
 

@@ -218,6 +218,20 @@ class API {
     return topTenMovieModel;
   }
 
+  Future<MovieModel> searchMovie(String text, [String? page]) async {
+    var path = '/3/search/movie';
+    var requestUrl = Uri.https(_apiUrl!, path,
+        {'api_key': _apiKey!, 'query': text, 'page': page ?? '1'});
+    var response = await getDataAPI(requestUrl);
+    var decodedResponse = json.decode(response.body);
+    final searchedMovieModel = MovieModel.fromJSON(decodedResponse);
+
+    if (searchedMovieModel.toJson().isEmpty) {
+      throw ErrorModel.fromJson(decodedResponse);
+    }
+    return searchedMovieModel;
+  }
+
   Future<GenreModel> getGenre() async {
     var path = '/3/genre/movie/list';
     var requestUrl = Uri.https(_apiUrl!, path, {'api_key': _apiKey!});

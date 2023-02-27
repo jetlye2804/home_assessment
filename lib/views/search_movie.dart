@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../models/error_model.dart';
 import '../models/genre_model.dart';
 import '../models/movie_model.dart';
+import '../utils/api.dart';
+import '../utils/debouncer.dart';
 import 'base/app_drawer.dart';
 import 'base/common_widget.dart';
 import 'base/customized_app_bar.dart';
@@ -20,7 +25,9 @@ class _SearchMovieState extends State<SearchMovie> {
   late GenreModel genreModel =
       ModalRoute.of(context)!.settings.arguments as GenreModel;
   Future<MovieModel>? searchedMovieModel;
+  String text = '';
   int currentPage = 1;
+  Timer? _debounce;
 
   @override
   initState() {
@@ -32,11 +39,49 @@ class _SearchMovieState extends State<SearchMovie> {
     super.didChangeDependencies();
   }
 
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  //https://stackoverflow.com/questions/51791501/how-to-debounce-textfield-onchange-in-dart
+  _onSearchChanged(String query) {
+    late Future<MovieModel> refreshedData;
+
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      try {
+        refreshedData = API().searchMovie(query);
+      } catch (error) {
+        if (error is ErrorModel) {
+          print("error 4");
+        }
+      }
+
+      setState(() {
+        searchedMovieModel = refreshedData;
+      });
+    });
+  }
+
   Widget searchedGridWidget() {
     return FutureBuilder<MovieModel>(
         future: searchedMovieModel,
         builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
+          var dataExist = false;
+
           if (!snapshot.hasData) {
+            dataExist = false;
+          } else {
+            if (snapshot.data!.totalResults! > 0) {
+              dataExist = true;
+            } else {
+              dataExist = false;
+            }
+          }
+
+          if (dataExist == false) {
             return Center(
               child: Text(
                 "No Result",
@@ -115,9 +160,12 @@ class _SearchMovieState extends State<SearchMovie> {
                 Expanded(
                   child: Container(
                       margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                      child: const TextField(
+                      child: TextField(
+                        onChanged: (text) {
+                          _onSearchChanged(text);
+                        },
                         keyboardAppearance: Brightness.dark,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Enter a movie name',
                         ),
