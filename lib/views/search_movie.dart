@@ -1,60 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:home_assessment/utils/api.dart';
-import 'package:home_assessment/utils/storage_manager.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../models/error_model.dart';
 import '../models/genre_model.dart';
 import '../models/movie_model.dart';
-import 'base/alert_dialog.dart';
 import 'base/app_drawer.dart';
 import 'base/common_widget.dart';
 import 'base/customized_app_bar.dart';
-import 'movie_detail.dart';
 
-class FavoriteMovie extends StatefulWidget {
-  static var routeName = '/favorite_movie';
+class SearchMovie extends StatefulWidget {
+  static var routeName = '/search_movie';
 
-  const FavoriteMovie({super.key});
+  const SearchMovie({super.key});
 
   @override
-  State<FavoriteMovie> createState() => _FavoriteMovie();
+  State<SearchMovie> createState() => _SearchMovieState();
 }
 
-class _FavoriteMovie extends State<FavoriteMovie> {
+class _SearchMovieState extends State<SearchMovie> {
   late GenreModel genreModel =
       ModalRoute.of(context)!.settings.arguments as GenreModel;
-  Future<MovieModel>? favoriteMovieModel;
+  Future<MovieModel>? searchedMovieModel;
   int currentPage = 1;
-  String? sessionId;
-  int? accountId;
-
-  void initialization() async {
-    var sessionValue = await StorageManager.readData('session_id');
-    var accountValue = await StorageManager.readData('account_id');
-
-    setState(() {
-      sessionId = sessionValue;
-      accountId = accountValue;
-    });
-
-    if (accountId != null && sessionId != null) {
-      try {
-        favoriteMovieModel = API().getFavoriteMovie(accountId!, sessionId!);
-      } catch (error) {
-        if (error is ErrorModel) {
-          print("error 4");
-        }
-      }
-    } else {
-      throw "Account ID and/or Session ID is/are missing";
-    }
-  }
 
   @override
   initState() {
-    initialization();
     super.initState();
   }
 
@@ -63,25 +32,14 @@ class _FavoriteMovie extends State<FavoriteMovie> {
     super.didChangeDependencies();
   }
 
-  void deleteFavorite(int movieId) async {
-    try {
-      API().saveFavoriteMovie(accountId!, sessionId!, movieId, false);
-      showDoneDialog(context, 'Successful',
-          'This movie has been removed to your favorite list.');
-    } catch (error) {
-      showDoneDialog(
-          context, 'Unsuccessful', 'Unable to remove from favorite list.');
-    }
-  }
-
-  Widget favoriteGridWidget() {
+  Widget searchedGridWidget() {
     return FutureBuilder<MovieModel>(
-        future: favoriteMovieModel,
+        future: searchedMovieModel,
         builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: Text(
-                "Loading List...",
+                "No Result",
                 style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                   fontSize: 36,
@@ -89,7 +47,6 @@ class _FavoriteMovie extends State<FavoriteMovie> {
                 )),
               ),
             );
-            ;
           }
 
           var favoriteMovie = snapshot.data!;
@@ -142,39 +99,42 @@ class _FavoriteMovie extends State<FavoriteMovie> {
         });
   }
 
-  Widget myFavoriteWidget() {
+  Widget searchedMovieWidget() {
     return SafeArea(
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Text(
-                          "My Favorite Movie",
-                          style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                          )),
+        child: GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Container(
+          color: Colors.black,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+                      child: const TextField(
+                        keyboardAppearance: Brightness.dark,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter a movie name',
                         ),
                       )),
-                    ],
-                  ),
-                  favoriteGridWidget(),
-                ])));
+                )
+              ],
+            ),
+            searchedGridWidget(),
+          ])),
+    ));
   }
 
   @override
   Widget build(BuildContext build) {
     return Scaffold(
-        drawer: AppDrawer(genreModel: genreModel),
         backgroundColor: const Color(0xFF000000),
-        appBar: appBar("My Favorite Movie", Colors.deepPurple, context),
-        body: myFavoriteWidget());
+        appBar: appBar("Search", Colors.deepPurple, context),
+        body: searchedMovieWidget());
   }
 }

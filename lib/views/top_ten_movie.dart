@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:home_assessment/views/base/common_widget.dart';
 import 'package:home_assessment/views/base/customized_app_bar.dart';
-import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../models/movie_model.dart';
 import '../utils/api.dart';
 import 'base/app_drawer.dart';
 import '../models/error_model.dart';
@@ -23,7 +23,7 @@ class TopTenMovie extends StatefulWidget {
 class _TopTenMovieState extends State<TopTenMovie> {
   late GenreModel genreModel =
       ModalRoute.of(context)!.settings.arguments as GenreModel;
-  late Future<TopTenMovieModel> topTenMovieModel;
+  late Future<MovieModel> topTenMovieModel;
   int currentPage = 1;
 
   void initialization() async {
@@ -59,7 +59,7 @@ class _TopTenMovieState extends State<TopTenMovie> {
       }
     }
 
-    late Future<TopTenMovieModel> refreshedData;
+    late Future<MovieModel> refreshedData;
     try {
       refreshedData = API().getTopTen(count.toString());
     } catch (error) {
@@ -75,10 +75,9 @@ class _TopTenMovieState extends State<TopTenMovie> {
   }
 
   Widget topTenGridWidget() {
-    return FutureBuilder<TopTenMovieModel>(
+    return FutureBuilder<MovieModel>(
         future: topTenMovieModel,
-        builder:
-            (BuildContext context, AsyncSnapshot<TopTenMovieModel> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: Text(

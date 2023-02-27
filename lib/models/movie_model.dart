@@ -1,20 +1,19 @@
-class FavoriteMovieModel {
+class MovieModel {
   int? page;
-  List<FavoriteMovieData>? results;
+  List<MovieData>? results;
   int? totalPages;
   int? totalResults;
 
   // Constructor
-  FavoriteMovieModel(
-      {this.page, this.results, this.totalPages, this.totalResults});
+  MovieModel({this.page, this.results, this.totalPages, this.totalResults});
 
   // Convert JSON into model data
-  FavoriteMovieModel.fromJSON(Map<String, dynamic> json) {
+  MovieModel.fromJSON(Map<String, dynamic> json) {
     page = json['page'];
     if (json['results'] != null) {
-      results = <FavoriteMovieData>[];
+      results = <MovieData>[];
       json['results']
-          .forEach((item) => {results!.add(FavoriteMovieData.fromJson(item))});
+          .forEach((item) => {results!.add(MovieData.fromJson(item))});
     }
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
@@ -33,7 +32,7 @@ class FavoriteMovieModel {
   }
 }
 
-class FavoriteMovieData {
+class MovieData {
   bool? adult;
   String? backdropPath;
   List<int>? genreIds;
@@ -50,7 +49,7 @@ class FavoriteMovieData {
   int? voteCount;
 
   // Constructor
-  FavoriteMovieData(
+  MovieData(
       {this.adult,
       this.backdropPath,
       this.genreIds,
@@ -67,7 +66,7 @@ class FavoriteMovieData {
       this.voteCount});
 
   // Convert JSON into model data
-  FavoriteMovieData.fromJson(Map<String, dynamic> json) {
+  MovieData.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
 

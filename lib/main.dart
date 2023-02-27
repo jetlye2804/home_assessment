@@ -9,6 +9,7 @@ import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/views/movie_detail.dart';
 import 'package:home_assessment/utils/page_transition.dart';
+import 'package:home_assessment/views/search_movie.dart';
 import 'package:home_assessment/views/top_ten_movie.dart';
 
 import 'models/error_model.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       MovieDetail.routeName: MovieDetail(),
       TopTenMovie.routeName: TopTenMovie(),
       FavoriteMovie.routeName: FavoriteMovie(),
+      SearchMovie.routeName: SearchMovie(),
     };
 
     try {

@@ -6,12 +6,11 @@ import 'package:home_assessment/models/error_model.dart';
 import 'package:home_assessment/models/genre_model.dart';
 import 'package:home_assessment/models/movie_detail_model.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
-import 'package:home_assessment/models/top_ten_movie_model.dart';
 import 'package:home_assessment/utils/storage_manager.dart';
 import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/favorite_movie_model.dart';
+import '../models/movie_model.dart';
 
 class API {
   final String? _apiKey = dotenv.env['MOVIE_API_KEY'];
@@ -161,14 +160,14 @@ class API {
     }
   }
 
-  Future<FavoriteMovieModel> getFavoriteMovie(int accountId, String sessionId,
+  Future<MovieModel> getFavoriteMovie(int accountId, String sessionId,
       [String? page]) async {
     var path = '/3/account/$accountId/favorite/movies';
     var requestUrl = Uri.https(_apiUrl!, path,
         {'api_key': _apiKey!, 'session_id': sessionId, 'page': page ?? '1'});
     var response = await getDataAPI(requestUrl);
     var decodedResponse = json.decode(response.body);
-    final favoriteMovieModel = FavoriteMovieModel.fromJSON(decodedResponse);
+    final favoriteMovieModel = MovieModel.fromJSON(decodedResponse);
 
     if (favoriteMovieModel.toJson().isEmpty) {
       throw ErrorModel.fromJson(decodedResponse);
@@ -205,13 +204,13 @@ class API {
     return nowPlayingModel;
   }
 
-  Future<TopTenMovieModel> getTopTen([String? page]) async {
+  Future<MovieModel> getTopTen([String? page]) async {
     var path = '/3/movie/popular';
     var requestUrl =
         Uri.https(_apiUrl!, path, {'api_key': _apiKey!, 'page': page ?? '1'});
     var response = await getDataAPI(requestUrl);
     var decodedResponse = json.decode(response.body);
-    final topTenMovieModel = TopTenMovieModel.fromJSON(decodedResponse);
+    final topTenMovieModel = MovieModel.fromJSON(decodedResponse);
 
     if (topTenMovieModel.toJson().isEmpty) {
       throw ErrorModel.fromJson(decodedResponse);

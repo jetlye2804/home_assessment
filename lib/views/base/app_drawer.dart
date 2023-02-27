@@ -67,7 +67,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 },
                 title: const Text("My Favorite Movie",
                     style: TextStyle(fontSize: 20)),
-              )
+              ),
             ],
           ),
         )));

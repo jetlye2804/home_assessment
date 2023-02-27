@@ -4,8 +4,6 @@ import 'package:home_assessment/utils/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/views/base/common_widget.dart';
 import 'package:home_assessment/views/base/customized_app_bar.dart';
-import 'package:home_assessment/views/movie_detail.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 import 'base/app_drawer.dart';
 import '../models/error_model.dart';
@@ -182,7 +180,7 @@ class _HomeState extends State<Home> {
           genreModel: widget.genreModel,
         ),
         appBar: appBarWithSearchButton(
-            "Jet's Movie App", Colors.deepPurple, context),
+            "Jet's Movie App", Colors.deepPurple, context, widget.genreModel!),
         body: homeWidget());
   }
 }
