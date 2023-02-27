@@ -114,28 +114,6 @@ class _FavoriteMovie extends State<FavoriteMovie> {
             itemBuilder: (BuildContext context, int index) {
               var movieItem = englishMovieList[index];
 
-              var adultTag = Container(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 0, 168, 31)),
-                  child: const Text("Safe"));
-              if (movieItem.adult! == true) {
-                adultTag = Container(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 168, 0, 0)),
-                    child: const Text("Adult"));
-              }
-              var languageTag = Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.deepPurple),
-                  child: Text(movieItem.originalLanguage!.toUpperCase()));
-
               var genreTag = Container();
 
               if (movieItem.genreIds != null &&
@@ -151,102 +129,16 @@ class _FavoriteMovie extends State<FavoriteMovie> {
                     child: Text(genre.name!.toUpperCase()));
               }
 
-              var votingColor = Colors.green;
-              if (movieItem.voteAverage! < 7.0) {
-                votingColor = Colors.yellow;
-              } else if (movieItem.voteAverage! < 5.0) {
-                votingColor = Colors.red;
-              }
-
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamed(MovieDetail.routeName, arguments: {
-                    'movie_id': movieItem.id,
-                    'has_added': true,
-                  });
-                },
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: const Color.fromARGB(255, 52, 52, 52)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20)),
-                              child: movieItem.posterPath != null
-                                  ? CommonWidget().posterContainerWidget(
-                                      movieItem.posterPath)
-                                  : CommonWidget().noPosterWidget()),
-                          Container(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(movieItem.originalTitle!,
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400)),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 8.0, bottom: 8.0),
-                                    child: Text(movieItem.releaseDate!),
-                                  ),
-                                  Container(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 8.0),
-                                      child: Row(
-                                        children: [adultTag, languageTag],
-                                      )),
-                                  genreTag
-                                ],
-                              )),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      right: 16.0,
-                      bottom: 16.0,
-                      child: CircularPercentIndicator(
-                        radius: 28.0,
-                        lineWidth: 4.0,
-                        animation: true,
-                        percent: (movieItem.voteAverage! / 10),
-                        center:
-                            Text("${(movieItem.voteAverage! * 10).round()}%"),
-                        circularStrokeCap: CircularStrokeCap.round,
-                        progressColor: votingColor,
-                      ),
-                    ),
-                    Positioned(
-                        right: 0.0,
-                        top: 0.0,
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all<Color>(Colors.red),
-                            ),
-                            onPressed: () {
-                              showConfirmationDialog(context, 'Remove movie',
-                                  'Are you sure to remove this movie from your favorite list?',
-                                  () {
-                                deleteFavorite(movieItem.id!);
-                              });
-                            },
-                            child: Container(),
-                          ),
-                        )),
-                  ],
-                ),
-              );
+              return CommonWidget().movieGridCellWidget(
+                  context,
+                  movieItem.id!,
+                  movieItem.posterPath,
+                  movieItem.originalTitle!,
+                  movieItem.releaseDate!,
+                  movieItem.adult!,
+                  movieItem.originalLanguage!,
+                  genreTag,
+                  movieItem.voteAverage!);
             },
           ));
         });

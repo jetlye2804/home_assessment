@@ -16,6 +16,16 @@ import '../models/favorite_movie_model.dart';
 class API {
   final String? _apiKey = dotenv.env['MOVIE_API_KEY'];
   final String? _apiUrl = dotenv.env['MOVIE_API_URL'];
+  final String? _v4Auth = dotenv.env['MOVIE_V4_AUTH'];
+
+  Map<String, String> configureApiHeader() {
+    final Map<String, String> header = <String, String>{};
+    header['Authorization'] = "Bearer $_v4Auth";
+    header['Content-Type'] = "application/json";
+    header['Accept'] = "application/json";
+
+    return header;
+  }
 
   void printWrapped(String text) {
     final pattern = RegExp('.{1,1019}');

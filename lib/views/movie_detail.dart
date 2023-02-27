@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import '../utils/storage_manager.dart';
 import 'base/alert_dialog.dart';
+import 'base/common_widget.dart';
 
 class MovieDetail extends StatefulWidget {
   static var routeName = '/movie_detail';
@@ -124,24 +125,6 @@ class _MovieDetail extends State<MovieDetail> {
     final String formattedDate = formatter.format(parsedDate);
 
     return formattedDate;
-  }
-
-  Widget adultTag(bool isAdult) {
-    if (isAdult == true) {
-      return Container(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 168, 0, 0)),
-          child: Text("Adult Content".toUpperCase()));
-    } else {
-      return Container(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 0, 168, 31)),
-          child: Text("No Adult Content".toUpperCase()));
-    }
   }
 
   Widget overviewWidget(String? overview) {
@@ -471,7 +454,8 @@ class _MovieDetail extends State<MovieDetail> {
                                     style: const TextStyle(fontSize: 16.0),
                                   ),
                                 ),
-                                adultTag(movieDetail.adult!)
+                                CommonWidget()
+                                    .adultTagWidget(movieDetail.adult!)
                               ],
                             )),
                         ElevatedButton(
