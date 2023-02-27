@@ -7,7 +7,6 @@ import '../models/error_model.dart';
 import '../models/genre_model.dart';
 import '../models/movie_model.dart';
 import '../utils/api.dart';
-import '../utils/debouncer.dart';
 import 'base/app_drawer.dart';
 import 'base/common_widget.dart';
 import 'base/customized_app_bar.dart';
@@ -45,6 +44,33 @@ class _SearchMovieState extends State<SearchMovie> {
     super.dispose();
   }
 
+  paginateSearchedMovie(String step, String query) {
+    var count = currentPage;
+    if (step == 'next') {
+      count += 1;
+    } else if (step == "back") {
+      if (currentPage > 1) {
+        count -= 1;
+      } else {
+        count = 1;
+      }
+    }
+
+    late Future<MovieModel> refreshedData;
+    try {
+      refreshedData = API().searchMovie(query, count.toString());
+    } catch (error) {
+      if (error is ErrorModel) {
+        print("error 5");
+      }
+    }
+
+    setState(() {
+      currentPage = count;
+      searchedMovieModel = refreshedData;
+    });
+  }
+
   //https://stackoverflow.com/questions/51791501/how-to-debounce-textfield-onchange-in-dart
   _onSearchChanged(String query) {
     late Future<MovieModel> refreshedData;
@@ -60,9 +86,39 @@ class _SearchMovieState extends State<SearchMovie> {
       }
 
       setState(() {
+        text = query;
+        currentPage = 1;
         searchedMovieModel = refreshedData;
       });
     });
+  }
+
+  Widget widgetSearchPaginationWidget() {
+    return FutureBuilder<MovieModel>(
+      future: searchedMovieModel,
+      builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
+        var dataExist = false;
+
+        if (!snapshot.hasData) {
+          dataExist = false;
+        } else {
+          if (snapshot.data!.totalResults! > 0) {
+            dataExist = true;
+          } else {
+            dataExist = false;
+          }
+        }
+        if (dataExist == false) {
+          return Container();
+        }
+
+        return CommonWidget().paginationButtonWidget(currentPage, () {
+          paginateSearchedMovie('back', text);
+        }, () {
+          paginateSearchedMovie('next', text);
+        });
+      },
+    );
   }
 
   Widget searchedGridWidget() {
@@ -173,6 +229,7 @@ class _SearchMovieState extends State<SearchMovie> {
                 )
               ],
             ),
+            widgetSearchPaginationWidget(),
             searchedGridWidget(),
           ])),
     ));
