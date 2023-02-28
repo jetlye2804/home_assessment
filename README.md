@@ -4,7 +4,7 @@ A simple movie app which used TMDB V3 API.
 
 ## Getting Started
 
-*Disclaimer: This simple movie app is a Flutter project for assessment purpose.
+*Disclaimer: This simple movie app is a Flutter project for assessment purpose.*
 
 This movie app includes some features to get information about the movies:
 - Now Playing: Display a grid list of movies which are now in theatres.
