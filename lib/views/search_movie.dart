@@ -21,8 +21,11 @@ class SearchMovie extends StatefulWidget {
 }
 
 class _SearchMovieState extends State<SearchMovie> {
-  late GenreModel genreModel =
-      ModalRoute.of(context)!.settings.arguments as GenreModel;
+  late GenreModel genreModel = (ModalRoute.of(context)!.settings.arguments
+      as Map)['genre'] as GenreModel;
+  late MovieModel favoriteMovieModel =
+      (ModalRoute.of(context)!.settings.arguments as Map)['favorite']
+          as MovieModel;
   Future<MovieModel>? searchedMovieModel;
   String text = '';
   int currentPage = 1;
@@ -150,21 +153,27 @@ class _SearchMovieState extends State<SearchMovie> {
             );
           }
 
-          var favoriteMovie = snapshot.data!;
+          var searchedMovie = snapshot.data!;
           // Filter all non-english movie, especially russian movies
           // Intended to do so
-          var englishMovieList = favoriteMovie.results!.where((movie) {
+          var englishMovieList = searchedMovie.results!.where((movie) {
             return movie.originalLanguage == 'en';
           }).toList();
           var genre = genreModel;
           var genreList = genre.genres!;
 
+          var favoriteMovieList = <MovieData>[];
+          if (favoriteMovieModel.results != null) {
+            favoriteMovieList = favoriteMovieModel.results!;
+          }
+
           return Expanded(
               child: GridView.builder(
             itemCount: englishMovieList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 550,
-                crossAxisCount: 2,
+                crossAxisCount:
+                    MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0),
             itemBuilder: (BuildContext context, int index) {
@@ -185,6 +194,14 @@ class _SearchMovieState extends State<SearchMovie> {
                     child: Text(genre.name!.toUpperCase()));
               }
 
+              var isSavedFav = false;
+              var contain =
+                  favoriteMovieList.where((fav) => fav.id == movieItem.id!);
+
+              if (contain.isNotEmpty) {
+                isSavedFav = true;
+              }
+
               return CommonWidget().movieGridCellWidget(
                   context,
                   movieItem.id!,
@@ -194,7 +211,8 @@ class _SearchMovieState extends State<SearchMovie> {
                   movieItem.adult!,
                   movieItem.originalLanguage!,
                   genreTag,
-                  movieItem.voteAverage!);
+                  movieItem.voteAverage!,
+                  isSavedFav);
             },
           ));
         });

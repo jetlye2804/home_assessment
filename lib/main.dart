@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:home_assessment/models/movie_model.dart';
 import 'package:home_assessment/utils/api.dart';
+import 'package:home_assessment/utils/storage_manager.dart';
 import 'package:home_assessment/views/favorite_movie.dart';
 import 'package:home_assessment/views/home.dart';
 import 'package:home_assessment/models/genre_model.dart';
@@ -27,9 +29,10 @@ class MyApp extends StatelessWidget {
 
   late BuildContext context;
   late Future<GenreModel> genreModel;
+  Future<MovieModel>? favoriteMovieModel;
   Map<String, Widget>? routes;
 
-  Future<void> initialization() async {
+  void initialization() async {
     routes = {
       Home.routeName: Home(),
       MovieDetail.routeName: MovieDetail(),
@@ -40,7 +43,7 @@ class MyApp extends StatelessWidget {
 
     try {
       genreModel = API().getGenre();
-      API().login();
+      await API().login();
     } catch (error) {
       if (error is ErrorModel) {
         print("error 1");
@@ -48,9 +51,16 @@ class MyApp extends StatelessWidget {
     }
   }
 
+  Future<MovieModel> loadFavoriteMovieModel() async {
+    var sessionValue = await StorageManager.readData('session_id');
+    var accountValue = await StorageManager.readData('account_id');
+    return API().getFavoriteMovie(accountValue, sessionValue);
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    favoriteMovieModel = loadFavoriteMovieModel();
     this.context = context;
     initialization();
     return MaterialApp(
@@ -59,12 +69,14 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
           scaffoldBackgroundColor: const Color(0xFF000000)),
       home: FutureBuilder(
-        future: Future.wait([genreModel]),
+        future: Future.wait([genreModel, favoriteMovieModel!]),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.data != null) {
             FlutterNativeSplash.remove();
             print(snapshot.data);
-            return Home(genreModel: snapshot.data![0]);
+            return Home(
+                genreModel: snapshot.data![0],
+                favoriteMovieModel: snapshot.data![1]);
           } else {
             return Container();
           }

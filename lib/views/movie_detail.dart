@@ -463,11 +463,11 @@ class _MovieDetail extends State<MovieDetail> {
                           onPressed: () {
                             if (accountId != null &&
                                 sessionId != null &&
-                                hasAddedFav == null) {
+                                hasAddedFav != true) {
                               saveFavorite(movieDetail.id!);
                             }
                           },
-                          child: Text("Save to Favorite List"),
+                          child: const Text("Save to Favorite List"),
                         ),
                         const Divider(
                           color: Colors.white,

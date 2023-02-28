@@ -4,26 +4,42 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../movie_detail.dart';
 
 class CommonWidget {
-  Widget posterContainerWidget(posterPath) {
-    return Image.network(
-      "https://www.themoviedb.org/t/p/w440_and_h660_face/$posterPath",
-      fit: BoxFit.cover,
-      height: 300,
-      width: 200,
-      errorBuilder:
-          (BuildContext context, Object exception, StackTrace? stackTrace) {
-        return noPosterWidget();
-      },
+  Widget posterContainerWidget(String posterPath, BuildContext context) {
+    var isPortrait = MediaQuery.of(context).orientation;
+    var aspectRatio = 2 / 3;
+    if (isPortrait == Orientation.landscape) {
+      aspectRatio = 1 / 1;
+    }
+
+    return AspectRatio(
+      aspectRatio: aspectRatio,
+      child: Image.network(
+        "https://www.themoviedb.org/t/p/w440_and_h660_face/$posterPath",
+        fit: BoxFit.cover,
+        errorBuilder:
+            (BuildContext context, Object exception, StackTrace? stackTrace) {
+          return noPosterWidget(context);
+        },
+      ),
     );
   }
 
-  Widget noPosterWidget() {
-    return Container(
-      color: Colors.blueGrey,
-      height: 300,
-      width: 200,
-      child: const Center(
-        child: Text("Image Not Found"),
+  Widget noPosterWidget(BuildContext context) {
+    var isPortrait = MediaQuery.of(context).orientation;
+    var aspectRatio = 2 / 3;
+    if (isPortrait == Orientation.landscape) {
+      aspectRatio = 1 / 1;
+    }
+
+    return AspectRatio(
+      aspectRatio: aspectRatio,
+      child: Container(
+        color: Colors.blueGrey,
+        height: 300,
+        width: 200,
+        child: const Center(
+          child: Text("Image Not Found"),
+        ),
       ),
     );
   }
@@ -37,7 +53,8 @@ class CommonWidget {
       bool isAdult,
       String movieLanguage,
       Container genreTag,
-      double voteAverage) {
+      double voteAverage,
+      [bool? hasAddedFav]) {
     var adultTag = adultTagWidget(isAdult);
     var languageTag = languageTagWidget(movieLanguage!);
 
@@ -45,7 +62,7 @@ class CommonWidget {
       onTap: () {
         Navigator.of(context).pushNamed(MovieDetail.routeName, arguments: {
           'movie_id': movieId,
-          'has_added': true,
+          'has_added': hasAddedFav ?? false,
         });
       },
       child: Stack(
@@ -62,8 +79,9 @@ class CommonWidget {
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20)),
                     child: posterPath != null
-                        ? CommonWidget().posterContainerWidget(posterPath)
-                        : CommonWidget().noPosterWidget()),
+                        ? CommonWidget()
+                            .posterContainerWidget(posterPath, context)
+                        : CommonWidget().noPosterWidget(context)),
                 Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(

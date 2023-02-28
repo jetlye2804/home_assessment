@@ -21,8 +21,11 @@ class TopTenMovie extends StatefulWidget {
 }
 
 class _TopTenMovieState extends State<TopTenMovie> {
-  late GenreModel genreModel =
-      ModalRoute.of(context)!.settings.arguments as GenreModel;
+  late GenreModel genreModel = (ModalRoute.of(context)!.settings.arguments
+      as Map)['genre'] as GenreModel;
+  late MovieModel favoriteMovieModel =
+      (ModalRoute.of(context)!.settings.arguments as Map)['favorite']
+          as MovieModel;
   late Future<MovieModel> topTenMovieModel;
   int currentPage = 1;
 
@@ -100,12 +103,18 @@ class _TopTenMovieState extends State<TopTenMovie> {
           var genre = genreModel;
           var genreList = genre.genres!;
 
+          var favoriteMovieList = <MovieData>[];
+          if (favoriteMovieModel?.results != null) {
+            favoriteMovieList = favoriteMovieModel.results!;
+          }
+
           return Expanded(
               child: GridView.builder(
             itemCount: englishMovieList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 550,
-                crossAxisCount: 2,
+                crossAxisCount:
+                    MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0),
             itemBuilder: (BuildContext context, int index) {
@@ -126,6 +135,14 @@ class _TopTenMovieState extends State<TopTenMovie> {
                     child: Text(genre.name!.toUpperCase()));
               }
 
+              var isSavedFav = false;
+              var contain =
+                  favoriteMovieList.where((fav) => fav.id == movieItem.id!);
+
+              if (contain.isNotEmpty) {
+                isSavedFav = true;
+              }
+
               return CommonWidget().movieGridCellWidget(
                   context,
                   movieItem.id!,
@@ -135,7 +152,8 @@ class _TopTenMovieState extends State<TopTenMovie> {
                   movieItem.adult!,
                   movieItem.originalLanguage!,
                   genreTag,
-                  movieItem.voteAverage!);
+                  movieItem.voteAverage!,
+                  isSavedFav);
             },
           ));
         });
@@ -200,10 +218,13 @@ class _TopTenMovieState extends State<TopTenMovie> {
   @override
   Widget build(BuildContext build) {
     return Scaffold(
-        drawer: AppDrawer(genreModel: genreModel),
+        drawer: AppDrawer(
+          genreModel: genreModel,
+          favoriteMovieModel: favoriteMovieModel,
+        ),
         backgroundColor: const Color(0xFF000000),
-        appBar: appBarWithSearchButton(
-            "Top Rating Movies", Colors.deepPurple, context, genreModel),
+        appBar: appBarWithSearchButton("Top Rating Movies", Colors.deepPurple,
+            context, genreModel, favoriteMovieModel),
         body: topTenWidget());
   }
 }

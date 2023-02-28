@@ -19,10 +19,10 @@ class FavoriteMovie extends StatefulWidget {
   const FavoriteMovie({super.key});
 
   @override
-  State<FavoriteMovie> createState() => _FavoriteMovie();
+  State<FavoriteMovie> createState() => _FavoriteMovieState();
 }
 
-class _FavoriteMovie extends State<FavoriteMovie> {
+class _FavoriteMovieState extends State<FavoriteMovie> {
   late GenreModel genreModel =
       ModalRoute.of(context)!.settings.arguments as GenreModel;
   Future<MovieModel>? favoriteMovieModel;
@@ -104,9 +104,10 @@ class _FavoriteMovie extends State<FavoriteMovie> {
           return Expanded(
               child: GridView.builder(
             itemCount: englishMovieList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisExtent: 550,
-                crossAxisCount: 2,
+                crossAxisCount:
+                    MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0),
             itemBuilder: (BuildContext context, int index) {
@@ -136,7 +137,8 @@ class _FavoriteMovie extends State<FavoriteMovie> {
                   movieItem.adult!,
                   movieItem.originalLanguage!,
                   genreTag,
-                  movieItem.voteAverage!);
+                  movieItem.voteAverage!,
+                  true);
             },
           ));
         });

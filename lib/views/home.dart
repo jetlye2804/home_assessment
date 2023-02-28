@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home_assessment/models/movie_model.dart';
 import 'package:home_assessment/utils/api.dart';
 import 'package:home_assessment/models/now_playing_model.dart';
 import 'package:home_assessment/views/base/common_widget.dart';
@@ -12,8 +13,9 @@ import '../models/genre_model.dart';
 class Home extends StatefulWidget {
   static var routeName = '/home';
   GenreModel? genreModel;
+  MovieModel? favoriteMovieModel;
 
-  Home({super.key, this.genreModel});
+  Home({super.key, this.genreModel, this.favoriteMovieModel});
 
   @override
   State<Home> createState() => _HomeState();
@@ -35,10 +37,11 @@ class _HomeState extends State<Home> {
 
   @override
   void didChangeDependencies() {
-    if (widget.genreModel == null) {
-      var genre = ModalRoute.of(context)!.settings.arguments as GenreModel;
-      widget.genreModel = genre;
-    }
+    widget.genreModel ??= (ModalRoute.of(context)!.settings.arguments
+        as Map)['genre'] as GenreModel;
+
+    widget.favoriteMovieModel ??= (ModalRoute.of(context)!.settings.arguments
+        as Map)['favorite'] as MovieModel;
 
     super.didChangeDependencies();
   }
@@ -103,6 +106,11 @@ class _HomeState extends State<Home> {
           var genre = widget.genreModel;
           var genreList = genre!.genres!;
 
+          var favoriteMovieList = <MovieData>[];
+          if (widget.favoriteMovieModel?.results != null) {
+            favoriteMovieList = widget.favoriteMovieModel!.results!;
+          }
+
           return Expanded(
               child: GridView.builder(
             itemCount: englishMovieList.length,
@@ -129,6 +137,14 @@ class _HomeState extends State<Home> {
                     child: Text(genre.name!.toUpperCase()));
               }
 
+              var isSavedFav = false;
+              var contain =
+                  favoriteMovieList.where((fav) => fav.id == movieItem.id!);
+
+              if (contain.isNotEmpty) {
+                isSavedFav = true;
+              }
+
               return CommonWidget().movieGridCellWidget(
                   context,
                   movieItem.id!,
@@ -138,7 +154,8 @@ class _HomeState extends State<Home> {
                   movieItem.adult!,
                   movieItem.originalLanguage!,
                   genreTag,
-                  movieItem.voteAverage!);
+                  movieItem.voteAverage!,
+                  isSavedFav);
             },
           ));
         });
@@ -201,10 +218,10 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: AppDrawer(
-          genreModel: widget.genreModel,
-        ),
-        appBar: appBarWithSearchButton(
-            "Jet's Movie App", Colors.deepPurple, context, widget.genreModel!),
+            genreModel: widget.genreModel,
+            favoriteMovieModel: widget.favoriteMovieModel!),
+        appBar: appBarWithSearchButton("Jet's Movie App", Colors.deepPurple,
+            context, widget.genreModel!, widget.favoriteMovieModel!),
         body: homeWidget());
   }
 }
