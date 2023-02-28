@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../movie_detail.dart';
@@ -54,7 +55,7 @@ class CommonWidget {
       String movieLanguage,
       Container genreTag,
       double voteAverage,
-      [bool? hasAddedFav]) {
+      bool hasAddedFav) {
     var adultTag = adultTagWidget(isAdult);
     var languageTag = languageTagWidget(movieLanguage!);
 
@@ -62,7 +63,7 @@ class CommonWidget {
       onTap: () {
         Navigator.of(context).pushNamed(MovieDetail.routeName, arguments: {
           'movie_id': movieId,
-          'has_added': hasAddedFav ?? false,
+          'has_added': hasAddedFav,
         });
       },
       child: Stack(
@@ -105,10 +106,26 @@ class CommonWidget {
               ],
             ),
           ),
-          CommonWidget().bottomRightVoteRingWidget(voteAverage),
+          savedFavTag(hasAddedFav),
+          bottomRightVoteRingWidget(voteAverage),
         ],
       ),
     );
+  }
+
+  Widget savedFavTag(bool isSaved) {
+    if (isSaved == true) {
+      return Positioned(
+          left: 16.0,
+          bottom: 16.0,
+          child: Container(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10), color: Colors.green),
+              child: Text("Saved".toUpperCase())));
+    } else {
+      return Container();
+    }
   }
 
   Widget bottomRightVoteRingWidget(double voteAverage) {
@@ -212,6 +229,25 @@ class CommonWidget {
                 ),
               )
             ],
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget headerWidget(String header) {
+    return Row(
+      children: [
+        Expanded(
+            child: Container(
+          margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
+          child: Text(
+            header,
+            style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+            )),
           ),
         )),
       ],

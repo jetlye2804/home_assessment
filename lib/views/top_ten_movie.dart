@@ -77,21 +77,114 @@ class _TopTenMovieState extends State<TopTenMovie> {
     });
   }
 
-  Widget topTenGridWidget() {
+  Widget topTenGridWidget(List<MovieData> englishMovieList,
+      List<GenreChildModel> genreList, List<MovieData> favoriteMovieList) {
+    return Expanded(
+        child: GridView.builder(
+      itemCount: englishMovieList.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 550,
+          crossAxisCount:
+              MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
+          crossAxisSpacing: 12.0,
+          mainAxisSpacing: 12.0),
+      itemBuilder: (BuildContext context, int index) {
+        var movieItem = englishMovieList[index];
+
+        var genreTag = Container();
+
+        if (movieItem.genreIds != null && movieItem.genreIds!.isNotEmpty) {
+          var genre = genreList
+              .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
+          genreTag = Container(
+              margin: const EdgeInsets.only(right: 8, bottom: 8),
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blueAccent),
+              child: Text(genre.name!.toUpperCase()));
+        }
+
+        var isSavedFav = false;
+        var contain = favoriteMovieList.where((fav) => fav.id == movieItem.id!);
+
+        if (contain.isNotEmpty) {
+          isSavedFav = true;
+        }
+
+        return CommonWidget().movieGridCellWidget(
+            context,
+            movieItem.id!,
+            movieItem.posterPath,
+            movieItem.originalTitle!,
+            movieItem.releaseDate!,
+            movieItem.adult!,
+            movieItem.originalLanguage!,
+            genreTag,
+            movieItem.voteAverage!,
+            isSavedFav);
+      },
+    ));
+  }
+
+  Widget widgetPaginationWidget(MovieModel topTen, GenreModel genre) {
+    return CommonWidget().paginationButtonWidget(currentPage, () {
+      refreshTopTenMovie('back');
+    }, () {
+      refreshTopTenMovie('next');
+    }, topTen.totalPages!);
+  }
+
+  Widget topTenWidget(
+      MovieModel topTen,
+      GenreModel genre,
+      List<MovieData> englishMovieList,
+      List<GenreChildModel> genreList,
+      List<MovieData> favoriteMovieList) {
+    return SafeArea(
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CommonWidget().headerWidget("Top Rating Movies"),
+                  widgetPaginationWidget(topTen, genre),
+                  topTenGridWidget(
+                      englishMovieList, genreList, favoriteMovieList)
+                ])));
+  }
+
+  @override
+  Widget build(BuildContext build) {
     return FutureBuilder<MovieModel>(
         future: topTenMovieModel,
         builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
+          var dataExist = false;
+
           if (!snapshot.hasData) {
-            return Center(
-              child: Text(
-                "Loading List...",
-                style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                )),
-              ),
-            );
+            dataExist = false;
+          } else {
+            if (snapshot.data!.totalResults! > 0) {
+              dataExist = true;
+            } else {
+              dataExist = false;
+            }
+          }
+          if (dataExist == false) {
+            return Scaffold(
+                drawer: AppDrawer(genreModel: genreModel),
+                backgroundColor: const Color(0xFF000000),
+                appBar: appBar("My Favorite Movie", Colors.deepPurple, context),
+                body: Center(
+                  child: Text(
+                    "Top Rating Movies",
+                    style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                    )),
+                  ),
+                ));
           }
 
           var topTen = snapshot.data!;
@@ -104,127 +197,20 @@ class _TopTenMovieState extends State<TopTenMovie> {
           var genreList = genre.genres!;
 
           var favoriteMovieList = <MovieData>[];
-          if (favoriteMovieModel?.results != null) {
+          if (favoriteMovieModel.results != null) {
             favoriteMovieList = favoriteMovieModel.results!;
           }
 
-          return Expanded(
-              child: GridView.builder(
-            itemCount: englishMovieList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 550,
-                crossAxisCount:
-                    MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0),
-            itemBuilder: (BuildContext context, int index) {
-              var movieItem = englishMovieList[index];
-
-              var genreTag = Container();
-
-              if (movieItem.genreIds != null &&
-                  movieItem.genreIds!.isNotEmpty) {
-                var genre = genreList
-                    .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
-                genreTag = Container(
-                    margin: const EdgeInsets.only(right: 8, bottom: 8),
-                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.blueAccent),
-                    child: Text(genre.name!.toUpperCase()));
-              }
-
-              var isSavedFav = false;
-              var contain =
-                  favoriteMovieList.where((fav) => fav.id == movieItem.id!);
-
-              if (contain.isNotEmpty) {
-                isSavedFav = true;
-              }
-
-              return CommonWidget().movieGridCellWidget(
-                  context,
-                  movieItem.id!,
-                  movieItem.posterPath,
-                  movieItem.originalTitle!,
-                  movieItem.releaseDate!,
-                  movieItem.adult!,
-                  movieItem.originalLanguage!,
-                  genreTag,
-                  movieItem.voteAverage!,
-                  isSavedFav);
-            },
-          ));
+          return Scaffold(
+              drawer: AppDrawer(
+                genreModel: genreModel,
+                favoriteMovieModel: favoriteMovieModel,
+              ),
+              backgroundColor: const Color(0xFF000000),
+              appBar: appBarWithSearchButton("Top Rating Movies",
+                  Colors.deepPurple, context, genreModel, favoriteMovieModel),
+              body: topTenWidget(topTen, genre, englishMovieList, genreList,
+                  favoriteMovieList));
         });
-  }
-
-  Widget widgetPaginationWidget() {
-    return FutureBuilder<MovieModel>(
-      future: topTenMovieModel,
-      builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
-        var dataExist = false;
-
-        if (!snapshot.hasData) {
-          dataExist = false;
-        } else {
-          if (snapshot.data!.totalResults! > 0) {
-            dataExist = true;
-          } else {
-            dataExist = false;
-          }
-        }
-        if (dataExist == false) {
-          return Container();
-        }
-
-        return CommonWidget().paginationButtonWidget(currentPage, () {
-          refreshTopTenMovie('back');
-        }, () {
-          refreshTopTenMovie('next');
-        }, snapshot.data!.totalPages!);
-      },
-    );
-  }
-
-  Widget topTenWidget() {
-    return SafeArea(
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Text(
-                          "Top Rating Movies",
-                          style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                          )),
-                        ),
-                      )),
-                    ],
-                  ),
-                  widgetPaginationWidget(),
-                  topTenGridWidget()
-                ])));
-  }
-
-  @override
-  Widget build(BuildContext build) {
-    return Scaffold(
-        drawer: AppDrawer(
-          genreModel: genreModel,
-          favoriteMovieModel: favoriteMovieModel,
-        ),
-        backgroundColor: const Color(0xFF000000),
-        appBar: appBarWithSearchButton("Top Rating Movies", Colors.deepPurple,
-            context, genreModel, favoriteMovieModel),
-        body: topTenWidget());
   }
 }

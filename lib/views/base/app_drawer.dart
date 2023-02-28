@@ -67,8 +67,11 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   if (ModalRoute.of(context)!.settings.name !=
                       FavoriteMovie.routeName) {
-                    Navigator.of(context).pushNamed(FavoriteMovie.routeName,
-                        arguments: widget.genreModel);
+                    Navigator.of(context)
+                        .pushNamed(FavoriteMovie.routeName, arguments: {
+                      'genre': widget.genreModel,
+                      'favorite': widget.favoriteMovieModel,
+                    });
                   } else {
                     Navigator.of(context).pop();
                   }

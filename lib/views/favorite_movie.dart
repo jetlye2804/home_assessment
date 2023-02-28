@@ -23,8 +23,8 @@ class FavoriteMovie extends StatefulWidget {
 }
 
 class _FavoriteMovieState extends State<FavoriteMovie> {
-  late GenreModel genreModel =
-      ModalRoute.of(context)!.settings.arguments as GenreModel;
+  late GenreModel genreModel = (ModalRoute.of(context)!.settings.arguments
+      as Map)['genre'] as GenreModel;
   Future<MovieModel>? favoriteMovieModel;
   int currentPage = 1;
   String? sessionId;
@@ -74,22 +74,82 @@ class _FavoriteMovieState extends State<FavoriteMovie> {
     }
   }
 
-  Widget favoriteGridWidget() {
+  Widget favoriteGridWidget(
+      List<MovieData> englishMovieList, List<GenreChildModel> genreList) {
+    return Expanded(
+        child: GridView.builder(
+      itemCount: englishMovieList.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 550,
+          crossAxisCount:
+              MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
+          crossAxisSpacing: 12.0,
+          mainAxisSpacing: 12.0),
+      itemBuilder: (BuildContext context, int index) {
+        var movieItem = englishMovieList[index];
+
+        var genreTag = Container();
+
+        if (movieItem.genreIds != null && movieItem.genreIds!.isNotEmpty) {
+          var genre = genreList
+              .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
+          genreTag = Container(
+              margin: const EdgeInsets.only(right: 8, bottom: 8),
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blueAccent),
+              child: Text(genre.name!.toUpperCase()));
+        }
+
+        return CommonWidget().movieGridCellWidget(
+            context,
+            movieItem.id!,
+            movieItem.posterPath,
+            movieItem.originalTitle!,
+            movieItem.releaseDate!,
+            movieItem.adult!,
+            movieItem.originalLanguage!,
+            genreTag,
+            movieItem.voteAverage!,
+            true);
+      },
+    ));
+  }
+
+  Widget myFavoriteWidget(
+      List<MovieData> englishMovieList, List<GenreChildModel> genreList) {
+    return SafeArea(
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CommonWidget().headerWidget("My Favorite Movie"),
+                  favoriteGridWidget(englishMovieList, genreList),
+                ])));
+  }
+
+  @override
+  Widget build(BuildContext build) {
     return FutureBuilder<MovieModel>(
         future: favoriteMovieModel,
         builder: (BuildContext context, AsyncSnapshot<MovieModel> snapshot) {
           if (!snapshot.hasData) {
-            return Center(
-              child: Text(
-                "Loading List...",
-                style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                )),
-              ),
-            );
-            ;
+            return Scaffold(
+                drawer: AppDrawer(genreModel: genreModel),
+                backgroundColor: const Color(0xFF000000),
+                appBar: appBar("My Favorite Movie", Colors.deepPurple, context),
+                body: Center(
+                  child: Text(
+                    "Loading List...",
+                    style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                    )),
+                  ),
+                ));
           }
 
           var favoriteMovie = snapshot.data!;
@@ -101,83 +161,13 @@ class _FavoriteMovieState extends State<FavoriteMovie> {
           var genre = genreModel;
           var genreList = genre.genres!;
 
-          return Expanded(
-              child: GridView.builder(
-            itemCount: englishMovieList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 550,
-                crossAxisCount:
-                    MediaQuery.of(context).size.shortestSide < 768 ? 2 : 4,
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0),
-            itemBuilder: (BuildContext context, int index) {
-              var movieItem = englishMovieList[index];
-
-              var genreTag = Container();
-
-              if (movieItem.genreIds != null &&
-                  movieItem.genreIds!.isNotEmpty) {
-                var genre = genreList
-                    .firstWhere((genre) => genre.id == movieItem.genreIds![0]);
-                genreTag = Container(
-                    margin: const EdgeInsets.only(right: 8, bottom: 8),
-                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.blueAccent),
-                    child: Text(genre.name!.toUpperCase()));
-              }
-
-              return CommonWidget().movieGridCellWidget(
-                  context,
-                  movieItem.id!,
-                  movieItem.posterPath,
-                  movieItem.originalTitle!,
-                  movieItem.releaseDate!,
-                  movieItem.adult!,
-                  movieItem.originalLanguage!,
-                  genreTag,
-                  movieItem.voteAverage!,
-                  true);
-            },
-          ));
+          return Scaffold(
+              drawer: AppDrawer(
+                  genreModel: genreModel, favoriteMovieModel: favoriteMovie),
+              backgroundColor: const Color(0xFF000000),
+              appBar: appBarWithSearchButton("My Favorite Movie",
+                  Colors.deepPurple, context, genreModel, favoriteMovie),
+              body: myFavoriteWidget(englishMovieList, genreList));
         });
-  }
-
-  Widget myFavoriteWidget() {
-    return SafeArea(
-        child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 16.0),
-                        child: Text(
-                          "My Favorite Movie",
-                          style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                          )),
-                        ),
-                      )),
-                    ],
-                  ),
-                  favoriteGridWidget(),
-                ])));
-  }
-
-  @override
-  Widget build(BuildContext build) {
-    return Scaffold(
-        drawer: AppDrawer(genreModel: genreModel),
-        backgroundColor: const Color(0xFF000000),
-        appBar: appBarWithSearchButton(
-            "My Favorite Movie", Colors.deepPurple, context, genreModel),
-        body: myFavoriteWidget());
   }
 }
