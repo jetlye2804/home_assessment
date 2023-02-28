@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void showDoneDialog(BuildContext context, String title, String subtitle) {
+void showDoneDialog(BuildContext context, String title, String subtitle,
+    Function() proceedFunction) {
   if (Platform.isIOS || Platform.isMacOS) {
     showCupertinoDialog(
         context: context,
@@ -14,6 +15,7 @@ void showDoneDialog(BuildContext context, String title, String subtitle) {
                   child: const Text('Ok'),
                   onPressed: () {
                     Navigator.of(context).pop(true);
+                    proceedFunction();
                   },
                 ),
               ],
@@ -30,6 +32,7 @@ void showDoneDialog(BuildContext context, String title, String subtitle) {
           TextButton(
             onPressed: () {
               Navigator.pop(context, true);
+              proceedFunction();
             },
             child: const Text(
               'Got it',

@@ -123,7 +123,8 @@ class _HomeState extends State<Home> {
             movieItem.originalLanguage!,
             genreTag,
             movieItem.voteAverage!,
-            isSavedFav);
+            isSavedFav,
+            widget.genreModel!);
       },
     ));
   }

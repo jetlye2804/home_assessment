@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import '../utils/storage_manager.dart';
 import 'base/alert_dialog.dart';
 import 'base/common_widget.dart';
+import 'favorite_movie.dart';
 
 class MovieDetail extends StatefulWidget {
   static var routeName = '/movie_detail';
@@ -30,6 +31,8 @@ class _MovieDetail extends State<MovieDetail> {
       (ModalRoute.of(context)!.settings.arguments as Map)['movie_id'] as int;
   late bool? hasAddedFav =
       (ModalRoute.of(context)!.settings.arguments as Map)['has_added'] as bool;
+  late GenreModel? genreModel = (ModalRoute.of(context)!.settings.arguments
+      as Map)['genre'] as GenreModel;
   Future<MovieDetailModel>? movieDetailModel;
   bool isLoad = true;
   String? sessionId;
@@ -345,17 +348,21 @@ class _MovieDetail extends State<MovieDetail> {
     );
   }
 
-  void saveFavorite(int movieId) async {
+  void saveFavorite(int movieId, GenreModel genre) async {
     try {
       API().saveFavoriteMovie(accountId!, sessionId!, movieId, true);
       showDoneDialog(context, 'Successful',
-          'This movie has been saved to your favorite list.');
+          'This movie has been saved to your favorite list.', () {
+        Navigator.of(context).pushNamed(FavoriteMovie.routeName, arguments: {
+          'genre': genre,
+        });
+      });
       setState(() {
         hasAddedFav = true;
       });
     } catch (error) {
       showDoneDialog(
-          context, 'Unsuccessful', 'Unable to save to favorite list.');
+          context, 'Unsuccessful', 'Unable to save to favorite list.', () {});
     }
   }
 
@@ -464,7 +471,7 @@ class _MovieDetail extends State<MovieDetail> {
                             if (accountId != null &&
                                 sessionId != null &&
                                 hasAddedFav != true) {
-                              saveFavorite(movieDetail.id!);
+                              saveFavorite(movieDetail.id!, genreModel!);
                             }
                           },
                           child: const Text("Save to Favorite List"),

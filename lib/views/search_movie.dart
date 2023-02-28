@@ -212,7 +212,8 @@ class _SearchMovieState extends State<SearchMovie> {
                   movieItem.originalLanguage!,
                   genreTag,
                   movieItem.voteAverage!,
-                  isSavedFav);
+                  isSavedFav,
+                  genreModel);
             },
           ));
         });

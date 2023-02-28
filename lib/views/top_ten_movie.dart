@@ -122,7 +122,8 @@ class _TopTenMovieState extends State<TopTenMovie> {
             movieItem.originalLanguage!,
             genreTag,
             movieItem.voteAverage!,
-            isSavedFav);
+            isSavedFav,
+            genreModel);
       },
     ));
   }

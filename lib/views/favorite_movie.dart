@@ -63,17 +63,6 @@ class _FavoriteMovieState extends State<FavoriteMovie> {
     super.didChangeDependencies();
   }
 
-  void deleteFavorite(int movieId) async {
-    try {
-      API().saveFavoriteMovie(accountId!, sessionId!, movieId, false);
-      showDoneDialog(context, 'Successful',
-          'This movie has been removed to your favorite list.');
-    } catch (error) {
-      showDoneDialog(
-          context, 'Unsuccessful', 'Unable to remove from favorite list.');
-    }
-  }
-
   Widget favoriteGridWidget(
       List<MovieData> englishMovieList, List<GenreChildModel> genreList) {
     return Expanded(
@@ -112,7 +101,8 @@ class _FavoriteMovieState extends State<FavoriteMovie> {
             movieItem.originalLanguage!,
             genreTag,
             movieItem.voteAverage!,
-            true);
+            true,
+            genreModel);
       },
     ));
   }

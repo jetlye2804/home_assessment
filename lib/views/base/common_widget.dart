@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:home_assessment/models/genre_model.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../movie_detail.dart';
@@ -55,7 +56,8 @@ class CommonWidget {
       String movieLanguage,
       Container genreTag,
       double voteAverage,
-      bool hasAddedFav) {
+      bool hasAddedFav,
+      GenreModel genreModel) {
     var adultTag = adultTagWidget(isAdult);
     var languageTag = languageTagWidget(movieLanguage!);
 
@@ -64,6 +66,7 @@ class CommonWidget {
         Navigator.of(context).pushNamed(MovieDetail.routeName, arguments: {
           'movie_id': movieId,
           'has_added': hasAddedFav,
+          'genre': genreModel,
         });
       },
       child: Stack(
