@@ -57,9 +57,9 @@ class MyApp extends StatelessWidget {
     return API().getFavoriteMovie(accountValue, sessionValue);
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Workaround to load favorite movie model
     favoriteMovieModel = loadFavoriteMovieModel();
     this.context = context;
     initialization();
