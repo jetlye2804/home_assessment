@@ -109,26 +109,10 @@ class CommonWidget {
               ],
             ),
           ),
-          savedFavTag(hasAddedFav),
           bottomRightVoteRingWidget(voteAverage),
         ],
       ),
     );
-  }
-
-  Widget savedFavTag(bool isSaved) {
-    if (isSaved == true) {
-      return Positioned(
-          left: 16.0,
-          bottom: 16.0,
-          child: Container(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), color: Colors.green),
-              child: Text("Saved".toUpperCase())));
-    } else {
-      return Container();
-    }
   }
 
   Widget bottomRightVoteRingWidget(double voteAverage) {
